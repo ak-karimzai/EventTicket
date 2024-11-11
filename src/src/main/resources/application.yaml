@@ -1,0 +1,12 @@
+spring:
+  application.name: 'Event management system'
+  datasource:
+    url: jdbc:postgresql://localhost:5454/event-management
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    properties.hibernate.show_sql: false
+    hibernate:
+      ddl-auto: update

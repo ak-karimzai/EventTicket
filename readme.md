@@ -1,0 +1,1 @@
+# [Project Docs](https://github.com/ak-karimzai/EventTicket/wiki)
