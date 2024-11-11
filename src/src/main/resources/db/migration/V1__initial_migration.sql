@@ -57,24 +57,23 @@ CREATE TABLE "order_items" (
                                "amount" int NOT NULL
 );
 
-ALTER TABLE "categories" ADD FOREIGN KEY ("created_by") REFERENCES "users" ("id");
+ALTER TABLE "categories"
+    ADD FOREIGN KEY ("created_by") REFERENCES "users" ("id") ON DELETE SET NULL,
+    ADD FOREIGN KEY ("last_modified_by") REFERENCES "users" ("id") ON DELETE SET NULL;
 
-ALTER TABLE "categories" ADD FOREIGN KEY ("last_modified_by") REFERENCES "users" ("id");
+ALTER TABLE "events"
+    ADD FOREIGN KEY ("category_id") REFERENCES "categories" ("id") ON DELETE CASCADE,
+    ADD FOREIGN KEY ("created_by") REFERENCES "users" ("id") ON DELETE SET NULL,
+    ADD FOREIGN KEY ("last_modified_by") REFERENCES "users" ("id") ON DELETE SET NULL;
 
-ALTER TABLE "events" ADD FOREIGN KEY ("category_id") REFERENCES "categories" ("id");
+ALTER TABLE "tickets"
+    ADD FOREIGN KEY ("event_id") REFERENCES "events" ("id") ON DELETE CASCADE,
+    ADD FOREIGN KEY ("created_by") REFERENCES "users" ("id") ON DELETE SET NULL,
+    ADD FOREIGN KEY ("last_modified_by") REFERENCES "users" ("id") ON DELETE SET NULL;
 
-ALTER TABLE "events" ADD FOREIGN KEY ("created_by") REFERENCES "users" ("id");
+ALTER TABLE "orders"
+    ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") ON DELETE CASCADE;
 
-ALTER TABLE "events" ADD FOREIGN KEY ("last_modified_by") REFERENCES "users" ("id");
-
-ALTER TABLE "tickets" ADD FOREIGN KEY ("event_id") REFERENCES "events" ("id");
-
-ALTER TABLE "tickets" ADD FOREIGN KEY ("created_by") REFERENCES "users" ("id");
-
-ALTER TABLE "tickets" ADD FOREIGN KEY ("last_modified_by") REFERENCES "users" ("id");
-
-ALTER TABLE "orders" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
-
-ALTER TABLE "order_items" ADD FOREIGN KEY ("order_id") REFERENCES "orders" ("id");
-
-ALTER TABLE "order_items" ADD FOREIGN KEY ("ticket_id") REFERENCES "tickets" ("id");
+ALTER TABLE "order_items"
+    ADD FOREIGN KEY ("order_id") REFERENCES "orders" ("id") ON DELETE CASCADE,
+    ADD FOREIGN KEY ("ticket_id") REFERENCES "tickets" ("id") ON DELETE CASCADE;
