@@ -28,6 +28,7 @@ class OrderItem(
 
         if (order != other.order) return false
         if (ticket != other.ticket) return false
+        if (amount != other.amount) return false
 
         return true
     }
@@ -36,6 +37,7 @@ class OrderItem(
         var result = super.hashCode()
         result = 31 * result + order.hashCode()
         result = 31 * result + ticket.hashCode()
+        result = 31 * result + amount
         return result
     }
 }
