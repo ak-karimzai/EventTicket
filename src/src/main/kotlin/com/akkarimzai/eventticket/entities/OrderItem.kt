@@ -1,6 +1,7 @@
 package com.akkarimzai.eventticket.entities
 
 import com.akkarimzai.eventticket.entities.common.Entity
+import jakarta.persistence.Column
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
@@ -15,7 +16,10 @@ class OrderItem(
 
     @ManyToOne
     @JoinColumn(name = "ticket_id", nullable = false)
-    var ticket: Ticket
+    var ticket: Ticket,
+
+    @Column(nullable = false)
+    var amount: Int
 ): Entity(id) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -53,7 +53,8 @@ CREATE TABLE "orders" (
 CREATE TABLE "order_items" (
                                "id" bigint PRIMARY KEY,
                                "order_id" bigint NOT NULL,
-                               "ticket_id" bigint NOT NULL
+                               "ticket_id" bigint NOT NULL,
+                               "amount" int NOT NULL
 );
 
 ALTER TABLE "categories" ADD FOREIGN KEY ("created_by") REFERENCES "users" ("id");
