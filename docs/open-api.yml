@@ -8,27 +8,47 @@ servers:
   - url: https://api.example.com
     description: Production server
 
+tags:
+  - name: categories
+    description: Endpoints related to categories
+  - name: events
+    description: Endpoints related to events
+  - name: users
+    description: Endpoints related to users
+  - name: orders
+    description: Endpoints related to orders
+  - name: tickets
+    description: Endpoints related to tickets
+
 paths:
   /users:
     get:
+      tags:
+        - users
       summary: Retrieve a list of users
       responses:
         '200':
           description: A list of users.
     post:
+      tags:
+        - users
       summary: Create a new user
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              type: array
+              items:
+                $ref: '#/components/schemas/UserDto'
       responses:
         '201':
           description: User created successfully.
 
   /users/{id}:
     get:
+      tags:
+        - users
       summary: Retrieve a user by ID
       parameters:
         - in: path
@@ -39,7 +59,13 @@ paths:
       responses:
         '200':
           description: User retrieved successfully.
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Permission denied.
     put:
+      tags:
+        - users
       summary: Update a user by ID
       parameters:
         - in: path
@@ -52,11 +78,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UpdateUserCommand'
       responses:
         '200':
           description: User updated successfully.
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Permission denied.
     delete:
+      tags:
+        - users
       summary: Delete a user by ID
       parameters:
         - in: path
@@ -71,95 +103,246 @@ paths:
   /categories:
     get:
       summary: Retrieve a list of categories
+      tags:
+        - categories
       responses:
         '200':
           description: A list of categories.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryDto'
+      
     post:
       summary: Create a new category
+      tags:
+        - categories
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Category'
+              $ref: '#/components/schemas/CreateCategoryCommand'
+      responses:
+        '201':
+          description: Category created successfully.
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Permission denied.
+  /categories/{categoryId}:
+    put:
+      tags:
+        - categories
+      parameters:
+        - in: path
+          name: categoryId
+          schema:
+            type: integer
+          required: true
+      summary: Update an existing category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryCommand'
       responses:
         '201':
           description: Category created successfully.
 
-  /events:
+  /categories/{categoryId}/events:
     get:
+      tags:
+        - categories
+      parameters:
+        - in: path
+          name: categoryId
+          schema:
+            type: integer
+          required: true
       summary: Retrieve a list of events
       responses:
         '200':
           description: A list of events.
     post:
+      tags:
+        - events
       summary: Create a new event
+      parameters:
+        - in: path
+          name: categoryId
+          schema:
+            type: integer
+          required: true
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Event'
+              $ref: '#/components/schemas/UpdateEventCommand'
       responses:
         '201':
           description: Event created successfully.
 
-  /tickets:
+  /categories/{categoryId}/events/{eventId}/tickets:
     get:
+      tags:
+        - tickets
+      parameters:
+        - in: path
+          name: categoryId
+          schema:
+            type: integer
+          required: true
+        - in: path
+          name: eventId
+          schema:
+            type: integer
+          required: true
       summary: Retrieve a list of tickets
       responses:
         '200':
           description: A list of tickets.
     post:
+      tags:
+        - tickets
+      parameters:
+        - in: path
+          name: categoryId
+          schema:
+            type: integer
+          required: true
+        - in: path
+          name: eventId
+          schema:
+            type: integer
+          required: true
       summary: Create a new ticket
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Ticket'
+              $ref: '#/components/schemas/CreateTicketCommand'
       responses:
         '201':
           description: Ticket created successfully.
 
   /orders:
     get:
+      tags:
+        - orders
       summary: Retrieve a list of orders
       responses:
         '200':
           description: A list of orders.
     post:
+      tags:
+        - orders
       summary: Place a new order
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Order'
+              $ref: '#/components/schemas/CreateOrderCommand'
       responses:
         '201':
           description: Order placed successfully.
 
-  /order_items:
+  /orders/{orderId}/items:
     get:
+      tags:
+        - orders
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: integer
+          required: true
       summary: Retrieve a list of order items
       responses:
         '200':
           description: A list of order items.
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Permission denied
     post:
+      tags:
+        - orders
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: integer
+          required: true
       summary: Add an item to an order
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OrderItem'
+              $ref: '#/components/schemas/AddItemCommand'
       responses:
         '201':
           description: Order item created successfully.
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Permission denied
 
 components:
   schemas:
+    RegisterCommand:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the user.
+        email:
+          type: string
+          description: Email of the user.
+        phone_number:
+          type: string
+          description: Phone number of the user.
+        username:
+          type: string
+          description: Username of the user.
+        password:
+          type: string
+          description: Password of the user.
+    
+    LoginCommand:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username of the user.
+        password:
+          type: string
+          description: Password of the user.
+          
+    UpdateUserCommand:
+        name:
+          type: string
+          description: Name of the user.
+        email:
+          type: string
+          description: Email of the user.
+        phone_number:
+          type: string
+          description: Phone number of the user.
+        username:
+          type: string
+          description: Username of the user.
+        password:
+          type: string
+          description: Password of the user.
+        
     UserDto:
       type: object
       properties:
@@ -185,6 +368,20 @@ components:
           type: string
           format: date-time
           description: Date the user joined.
+          
+    CreateCategoryCommand:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the category.
+    
+    UpdateCategoryCommand:
+      type: object
+      properties:
+        title:
+          type: string
+          description: New title of the category.
 
     CategoryDto:
       type: object
@@ -195,6 +392,62 @@ components:
         title:
           type: string
           description: Title of the category.
+          
+    CreateEventCommand:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the event.
+        artist:
+          type: string
+          description: Name of the artist for the event.
+        date:
+          type: string
+          format: date-time
+          description: Date and time of the event.
+        description:
+          type: string
+          description: Description of the event.
+        category:
+          $ref: '#/components/schemas/CategoryDto'
+          description: Category of the the event belongs to.
+        created_date:
+          type: string
+          format: date-time
+          description: Date the event was created.
+        last_modified_date:
+          type: string
+          format: date-time
+          description: Date the event was last modified.
+      
+    UpdateEventCommand:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the event.
+        artist:
+          type: string
+          description: Name of the artist for the event.
+        date:
+          type: string
+          format: date-time
+          description: Date and time of the event.
+        description:
+          type: string
+          description: Description of the event.
+        category:
+          $ref: '#/components/schemas/CategoryDto'
+          description: Category of the the event belongs to.
+        created_date:
+          type: string
+          format: date-time
+          description: Date the event was created.
+        last_modified_date:
+          type: string
+          format: date-time
+          description: Date the event was last modified.
     
     EventDto:
       type: object
@@ -226,7 +479,41 @@ components:
           type: string
           format: date-time
           description: Date the event was last modified.
-
+          
+    CreateTicketCommand:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the ticket.
+        description:
+          type: string
+          description: Description of the ticket.
+        price:
+          type: number
+          format: float
+          description: Price of the ticket.
+        event_id:
+          type: integer
+          description: event identifier for the ticket.
+    
+    UpdateTicketCommand:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the ticket.
+        description:
+          type: string
+          description: Description of the ticket.
+        price:
+          type: number
+          format: float
+          description: Price of the ticket.
+        event_id:
+          type: integer
+          description: event identifier for the ticket.
+    
     TicketDto:
       type: object
       properties:
@@ -255,6 +542,22 @@ components:
           format: date-time
           description: Date the ticket was last modified.
     
+    CreateOrderCommand:
+      type: object
+      properties:
+        items:
+          type: array
+          items: 
+            $ref: '#/components/schemas/OrderItemDto'
+    
+    UpdateOrderCommand:
+      type: object
+      properties:
+        items:
+          type: array
+          items: 
+            $ref: '#/components/schemas/OrderItemDto'
+    
     OrderDto:
       type: object
       properties:
@@ -272,22 +575,16 @@ components:
         order_paid:
           type: boolean
           description: Whether the order has been paid.
-
-    OrderItem:
+    
+    AddItemCommand:
       type: object
       properties:
-        id:
-          type: integer
-          description: Unique identifier for the order item.
-        order_id:
-          type: integer
-          description: ID of the order the item belongs to.
         ticket_id:
           type: integer
-          description: ID of the ticket in the order.
+          description: Ticket id.
         amount:
           type: integer
-          description: Quantity of the ticket in the order.
+          description: Amount of ticket
 
     OrderItemDto:
       type: object
