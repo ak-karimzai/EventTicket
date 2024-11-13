@@ -1,11 +1,9 @@
 package com.akkarimzai.eventticket.entities
 
 import com.akkarimzai.eventticket.entities.common.AuditableEntity
-import jakarta.persistence.Column
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
+@jakarta.persistence.Entity
 @Table(name = "tickets")
 class Ticket(
     id: Long?,
@@ -17,8 +15,8 @@ class Ticket(
     @Column(nullable = false)
     var price: Double,
 
-    @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id")
     var event: Event,
     createdBy: User
 ): AuditableEntity(id, createdBy) {

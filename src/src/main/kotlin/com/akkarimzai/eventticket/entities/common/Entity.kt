@@ -3,8 +3,9 @@ package com.akkarimzai.eventticket.entities.common
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.MappedSuperclass
 
-@jakarta.persistence.Entity
+@MappedSuperclass
 abstract class Entity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

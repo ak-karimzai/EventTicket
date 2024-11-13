@@ -4,6 +4,7 @@ import com.akkarimzai.eventticket.entities.common.Entity
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
+@jakarta.persistence.Entity
 @Table(name = "orders")
 class Order(
     id: Long?,
@@ -19,7 +20,7 @@ class Order(
     var orderPaid: Boolean = false,
 
     @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
-    var orderItems: List<OrderItem> = mutableListOf()
+    var items: MutableList<OrderItem> = mutableListOf()
 ): Entity(id) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -29,6 +30,7 @@ class Order(
         if (user != other.user) return false
         if (orderPlaced != other.orderPlaced) return false
         if (orderPaid != other.orderPaid) return false
+        if (items != other.items) return false
 
         return true
     }
@@ -38,6 +40,7 @@ class Order(
         result = 31 * result + user.hashCode()
         result = 31 * result + orderPlaced.hashCode()
         result = 31 * result + orderPaid.hashCode()
+        result = 31 * result + items.hashCode()
         return result
     }
 }

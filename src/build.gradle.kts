@@ -4,6 +4,8 @@ plugins {
     id("org.springframework.boot") version "3.3.5"
     id("io.spring.dependency-management") version "1.1.6"
     kotlin("plugin.jpa") version "1.9.25"
+    kotlin("kapt") version "1.8.0"
+    id("jacoco")
 }
 
 group = "com.akkarimzai"
@@ -15,12 +17,23 @@ java {
     }
 }
 
+sourceSets {
+    main {
+        java {
+            srcDir("src/main/kotlin")
+            srcDirs("target/generated-sources/annotations")
+        }
+    }
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    annotationProcessor("org.hibernate:hibernate-jpamodelgen:6.5.3.Final")
+    kapt("org.hibernate:hibernate-jpamodelgen:6.5.3.Final")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -42,12 +55,44 @@ kotlin {
     }
 }
 
+kapt {
+    arguments {
+        arg("hibernate.jakarta", "true")
+    }
+}
+
 allOpen {
     annotation("jakarta.persistence.Entity")
     annotation("jakarta.persistence.MappedSuperclass")
     annotation("jakarta.persistence.Embeddable")
 }
 
+jacoco {
+    toolVersion = "0.8.12"
+    reportsDirectory = layout.buildDirectory.dir("customJacocoReportDir")
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.withType<JacocoReport> {
+    dependsOn(tasks.test)
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+    }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.map { it ->
+            fileTree(it).apply {
+                exclude( "**/models**")
+                exclude("**/entities**")
+            }
+        })
+    }
 }

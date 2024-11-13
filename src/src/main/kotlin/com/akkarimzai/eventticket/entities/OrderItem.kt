@@ -6,16 +6,17 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
+@jakarta.persistence.Entity
 @Table(name = "order_items")
 class OrderItem(
     id: Long?,
 
     @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(name = "order_id")
     var order: Order,
 
     @ManyToOne
-    @JoinColumn(name = "ticket_id", nullable = false)
+    @JoinColumn(name = "ticket_id")
     var ticket: Ticket,
 
     @Column(nullable = false)

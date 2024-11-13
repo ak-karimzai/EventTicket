@@ -5,6 +5,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 
+@jakarta.persistence.Entity
 @Table(name = "users")
 class User(
     id: Long?,

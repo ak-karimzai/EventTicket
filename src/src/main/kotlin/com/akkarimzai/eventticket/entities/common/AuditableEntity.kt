@@ -4,9 +4,11 @@ import com.akkarimzai.eventticket.entities.User
 import jakarta.persistence.Column
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.MappedSuperclass
 import java.time.LocalDateTime
 
-class AuditableEntity(
+@MappedSuperclass
+abstract class AuditableEntity(
     id: Long?,
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
