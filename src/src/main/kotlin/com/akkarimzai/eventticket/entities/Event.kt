@@ -12,7 +12,7 @@ class Event(
     @Column(nullable = false)
     var title: String,
 
-    var artist: String,
+    var artist: String?,
 
     @Column(nullable = false)
     var date: LocalDateTime,
@@ -25,26 +25,4 @@ class Event(
     var category: Category,
 
     createdBy: User
-): AuditableEntity(id, createdBy) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Event) return false
-        if (!super.equals(other)) return false
-
-        if (title != other.title) return false
-        if (artist != other.artist) return false
-        if (date != other.date) return false
-        if (tickets != other.tickets) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + title.hashCode()
-        result = 31 * result + artist.hashCode()
-        result = 31 * result + date.hashCode()
-        result = 31 * result + tickets.hashCode()
-        return result
-    }
-}
+): AuditableEntity(id, createdBy)
