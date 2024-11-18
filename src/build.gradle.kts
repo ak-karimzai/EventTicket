@@ -31,11 +31,15 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     annotationProcessor("org.hibernate:hibernate-jpamodelgen:6.5.3.Final")
     kapt("org.hibernate:hibernate-jpamodelgen:6.5.3.Final")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
@@ -43,6 +47,8 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
+
+    implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -88,7 +94,7 @@ tasks.withType<JacocoReport> {
         html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
     }
     afterEvaluate {
-        classDirectories = files(classDirectories.files.map { it ->
+        classDirectories = files(classDirectories.files.map {
             fileTree(it).apply {
                 exclude( "**/models**")
                 exclude("**/entities**")
