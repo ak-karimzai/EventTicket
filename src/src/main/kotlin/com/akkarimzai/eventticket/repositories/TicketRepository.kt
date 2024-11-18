@@ -1,8 +1,8 @@
 package com.akkarimzai.eventticket.repositories
 
 import com.akkarimzai.eventticket.entities.Ticket
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.jpa.repository.JpaRepository
 
