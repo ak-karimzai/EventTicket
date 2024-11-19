@@ -14,5 +14,4 @@ class Category(
     @OneToMany(mappedBy = "category", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     var events: MutableList<Event> = mutableListOf(),
 
-    createdBy: User,
-): AuditableEntity(id, createdBy)
+): AuditableEntity(id)

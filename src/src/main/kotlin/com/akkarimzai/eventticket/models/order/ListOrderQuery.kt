@@ -4,6 +4,6 @@ import jakarta.validation.constraints.Min
 
 data class ListOrderQuery(
     @Min(0)
-    val page: Long,
+    val page: Int,
     @Min(1)
-    val size: Long)
+    val size: Int)

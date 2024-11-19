@@ -18,5 +18,4 @@ class Ticket(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     var event: Event?,
-    createdBy: User
-): AuditableEntity(id, createdBy)
+): AuditableEntity(id)

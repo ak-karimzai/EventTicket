@@ -12,7 +12,7 @@ abstract class AuditableEntity(
     id: Long?,
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
-    var createdBy: User,
+    var createdBy: User? = null,
 
     @Column(name = "created_date", nullable = false)
     var createdDate: LocalDateTime = LocalDateTime.now(),

@@ -7,7 +7,7 @@ import com.akkarimzai.eventticket.exceptions.NotFoundException
 import com.akkarimzai.eventticket.models.order.*
 import com.akkarimzai.eventticket.repositories.TicketRepository
 
-fun Order.toOrderDto(): OrderDto {
+fun Order.toDto(): OrderDto {
     return OrderDto(
         id = this.id!!,
         items = this.items.map { it.toOrderItemDto() },
@@ -18,7 +18,7 @@ fun Order.toOrderDto(): OrderDto {
 
 fun OrderItem.toOrderItemDto(): OrderItemDto {
     return OrderItemDto(
-        ticket = this.ticket.toTicketDto(),
+        ticket = this.ticket.toDto(),
         count = this.amount
     )
 }
@@ -53,7 +53,7 @@ fun UpdateOrderCommand.toOrder(order: Order, ticketRepository: TicketRepository)
         if (orderItem != null) {
             orderItem.amount = item.amount
         } else {
-            order.items.addLast(item)
+            order.items.add(item)
         }
     }
     return order

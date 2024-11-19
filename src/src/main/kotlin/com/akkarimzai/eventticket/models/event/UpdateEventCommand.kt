@@ -16,6 +16,5 @@ class UpdateEventCommand(
     @Size(min = 3, max = 256)
     val artist: String?,
 
-    @FutureOrPresent
     val date: LocalDateTime?
 )

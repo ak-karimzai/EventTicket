@@ -8,6 +8,6 @@ data class ListEventQuery(val title: String?,
     val from: LocalDateTime?,
     val to: LocalDateTime?,
     @Min(0)
-    val page: Long,
+    val page: Int,
     @Min(1)
-    val size: Long)
+    val size: Int)

@@ -4,11 +4,15 @@ import com.akkarimzai.eventticket.entities.Order
 import com.akkarimzai.eventticket.exceptions.NotFoundException
 import com.akkarimzai.eventticket.models.order.CreateOrderCommand
 import com.akkarimzai.eventticket.models.order.ListOrderQuery
+import com.akkarimzai.eventticket.models.order.OrderDto
 import com.akkarimzai.eventticket.models.order.UpdateOrderCommand
 import com.akkarimzai.eventticket.profiles.toOrder
+import com.akkarimzai.eventticket.profiles.toDto
 import com.akkarimzai.eventticket.repositories.OrderRepository
 import com.akkarimzai.eventticket.repositories.TicketRepository
 import mu.KotlinLogging
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
@@ -29,10 +33,12 @@ class OrderService(
         }
     }
 
-    fun list(userId: Long, query: ListOrderQuery): List<Order> {
+    fun list(userId: Long, query: ListOrderQuery): Page<OrderDto> {
         logger.info { "request list for user: $userId" }
 
-        return orderRepository.findAll()
+        return orderRepository
+            .findAll(PageRequest.of(query.page, query.size))
+            .map { it.toDto() }
     }
 
     fun create(command: CreateOrderCommand): Long {

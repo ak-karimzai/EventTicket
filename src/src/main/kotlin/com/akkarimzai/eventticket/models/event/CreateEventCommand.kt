@@ -1,5 +1,6 @@
 package com.akkarimzai.eventticket.models.event
 
+import jakarta.validation.Valid
 import jakarta.validation.constraints.Future
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
@@ -15,5 +16,6 @@ data class CreateEventCommand(
     @Future
     val date: LocalDateTime,
 
+    @Valid
     val tickets: List<EventTicketDto>
 )

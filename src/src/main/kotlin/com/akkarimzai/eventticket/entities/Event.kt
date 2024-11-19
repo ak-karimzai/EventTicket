@@ -23,6 +23,4 @@ class Event(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     var category: Category,
-
-    createdBy: User
-): AuditableEntity(id, createdBy)
+): AuditableEntity(id)
