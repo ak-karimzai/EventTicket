@@ -10,3 +10,12 @@ spring:
     properties.hibernate.show_sql: false
     hibernate:
       ddl-auto: update
+
+  docker:
+    compose:
+      file: C:\Users\user\Desktop\khalid-projects\EventTicket\src\compose.yaml
+
+security:
+  signing:
+    key: c63a4b9c304df32b788ca2404869a51b44adaa1d253cf9f5eb5bd75b45e5aea9
+    ttl: 600000

@@ -37,7 +37,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     annotationProcessor("org.hibernate:hibernate-jpamodelgen:6.5.3.Final")
     kapt("org.hibernate:hibernate-jpamodelgen:6.5.3.Final")
+
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+    implementation("org.apache.commons:commons-lang3:3.0")
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")

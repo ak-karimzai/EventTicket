@@ -1,19 +1,20 @@
-package com.akkarimzai.eventticket.services
+package com.akkarimzai.eventticket.services.impl
 
 import com.akkarimzai.eventticket.entities.User
 import com.akkarimzai.eventticket.exceptions.ConflictException
 import com.akkarimzai.eventticket.exceptions.NotFoundException
 import com.akkarimzai.eventticket.repositories.UserRepository
+import com.akkarimzai.eventticket.services.UserService
 import mu.KotlinLogging
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 
 @Service
 class UserServiceImpl(private val repository: UserRepository): UserService {
     private val logger = KotlinLogging.logger {}
 
-    override fun currentUser(): User {
-        TODO("Not yet implemented")
-    }
+    override fun userDetailsService(): UserDetailsService =
+        UserDetailsService { username -> loadByUsername(username) }
 
     override fun loadByUsername(username: String): User {
         logger.info { "Loading user with username: $username" }

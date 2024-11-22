@@ -1,13 +1,12 @@
 package com.akkarimzai.eventticket.entities.common
 
 import com.akkarimzai.eventticket.entities.User
-import jakarta.persistence.Column
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.MappedSuperclass
+import com.akkarimzai.eventticket.repositories.configs.AuditableEntityListener
+import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @MappedSuperclass
+@EntityListeners(AuditableEntityListener::class)
 abstract class AuditableEntity(
     id: Long?,
     @ManyToOne

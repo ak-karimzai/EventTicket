@@ -1,4 +1,4 @@
-package com.akkarimzai.eventticket.services
+package com.akkarimzai.eventticket.services.impl
 
 import com.akkarimzai.eventticket.entities.Event
 import com.akkarimzai.eventticket.exceptions.NotFoundException

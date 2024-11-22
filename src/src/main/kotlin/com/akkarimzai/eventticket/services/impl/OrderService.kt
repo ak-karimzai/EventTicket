@@ -1,4 +1,4 @@
-package com.akkarimzai.eventticket.services
+package com.akkarimzai.eventticket.services.impl
 
 import com.akkarimzai.eventticket.entities.Order
 import com.akkarimzai.eventticket.exceptions.NotFoundException
@@ -10,6 +10,7 @@ import com.akkarimzai.eventticket.profiles.toOrder
 import com.akkarimzai.eventticket.profiles.toDto
 import com.akkarimzai.eventticket.repositories.OrderRepository
 import com.akkarimzai.eventticket.repositories.TicketRepository
+import com.akkarimzai.eventticket.services.UserService
 import mu.KotlinLogging
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service
 class OrderService(
     private val orderRepository: OrderRepository,
     private val ticketRepository: TicketRepository,
-    private val userService: UserService
+    private val authService: AuthService
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -44,7 +45,7 @@ class OrderService(
     fun create(command: CreateOrderCommand): Long {
         logger.info { "request create $command" }
 
-        val user = userService.currentUser()
+        val user = authService.currentUser()
         val order = command.toOrder(user, ticketRepository)
 
         return orderRepository.save(order).id!!.also {
