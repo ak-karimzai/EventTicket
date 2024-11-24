@@ -1,13 +1,15 @@
 package com.akkarimzai.eventticket.repositories.configs
 
 import com.akkarimzai.eventticket.entities.common.AuditableEntity
-import com.akkarimzai.eventticket.services.impl.AuthService
+import com.akkarimzai.eventticket.services.impl.AuthServiceImpl
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
+import org.springframework.context.annotation.Lazy
+import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
-
-class AuditableEntityListener(private val authService: AuthService) {
+@Component
+class AuditableEntityListener(@Lazy private val authService: AuthServiceImpl) {
     @PrePersist
     fun prePersist(entity: AuditableEntity) {
         entity.createdDate = LocalDateTime.now()
