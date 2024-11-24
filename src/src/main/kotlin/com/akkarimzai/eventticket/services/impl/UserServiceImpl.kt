@@ -1,5 +1,6 @@
 package com.akkarimzai.eventticket.services.impl
 
+import com.akkarimzai.eventticket.annotations.Validate
 import com.akkarimzai.eventticket.entities.User
 import com.akkarimzai.eventticket.exceptions.ConflictException
 import com.akkarimzai.eventticket.exceptions.NotFoundException
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 
 @Service
+@Validate
 class UserServiceImpl(private val repository: UserRepository): UserService {
     private val logger = KotlinLogging.logger {}
 

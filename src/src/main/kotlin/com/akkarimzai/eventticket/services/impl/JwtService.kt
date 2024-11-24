@@ -1,13 +1,13 @@
 package com.akkarimzai.eventticket.services.impl
 
 import com.akkarimzai.eventticket.entities.User
-import com.akkarimzai.eventticket.exceptions.UnauthorizedException
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import mu.KotlinLogging
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.userdetails.UserDetails
 import java.security.Key
@@ -15,12 +15,13 @@ import org.springframework.stereotype.Service
 import java.security.SignatureException
 import java.util.*
 
-
 @Service
-class JwtService {
+class JwtService @Autowired constructor(
+    @Value("\${security.signing.key}") private var jwtKey: String,
+    @Value("\${security.signing.ttl}") private var ttl: Long?
+) {
     private val logger = KotlinLogging.logger {}
-    @Value("\${security.signing.key}") private lateinit var jwtKey: String
-    @Value("\${security.signing.ttl}") private var ttl: Long? = null
+
 
     fun extractUsername(token: String): String {
         return extractClaim(token, Claims::getSubject)

@@ -1,11 +1,13 @@
 package com.akkarimzai.eventticket.services.impl
 
+import com.akkarimzai.eventticket.annotations.Validate
 import com.akkarimzai.eventticket.entities.User
 import com.akkarimzai.eventticket.exceptions.UnauthorizedException
 import com.akkarimzai.eventticket.models.user.AuthResponse
 import com.akkarimzai.eventticket.models.user.LoginCommand
 import com.akkarimzai.eventticket.models.user.RegisterCommand
 import com.akkarimzai.eventticket.profiles.toUser
+import com.akkarimzai.eventticket.services.AuthService
 import com.akkarimzai.eventticket.services.UserService
 import mu.KotlinLogging
 import org.springframework.security.core.context.SecurityContextHolder
@@ -13,14 +15,15 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
-class AuthService(
+@Validate
+class AuthServiceImpl(
     private val userService: UserService,
     private val jwtService: JwtService,
     private val passwordEncoder: PasswordEncoder,
-) {
+): AuthService {
     private val logger = KotlinLogging.logger {}
 
-    fun currentUser(): User {
+    override fun currentUser(): User {
         val authentication = SecurityContextHolder.getContext().authentication
         val username = authentication?.name ?: throw UnauthorizedException("User not authenticated")
 
@@ -29,7 +32,7 @@ class AuthService(
         return userService.loadByUsername(username)
     }
 
-    fun register(command: RegisterCommand): AuthResponse {
+    override fun register(command: RegisterCommand): AuthResponse {
         logger.info { "Request register for user: ${command.username}" }
 
         val user = command.toUser(passwordEncoder)
@@ -39,7 +42,7 @@ class AuthService(
         return generateToken(user)
     }
 
-    fun login(command: LoginCommand): AuthResponse {
+    override fun login(command: LoginCommand): AuthResponse {
         logger.info { "Request login for user: ${command.username}" }
 
         val user = userService.loadByUsername(command.username)

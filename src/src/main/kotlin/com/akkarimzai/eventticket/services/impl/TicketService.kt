@@ -1,5 +1,6 @@
 package com.akkarimzai.eventticket.services.impl
 
+import com.akkarimzai.eventticket.annotations.Validate
 import com.akkarimzai.eventticket.entities.Ticket
 import com.akkarimzai.eventticket.exceptions.BadRequestException
 import com.akkarimzai.eventticket.exceptions.NotFoundException
@@ -18,6 +19,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
+@Validate
 class TicketService(
     private val ticketRepository: TicketRepository,
     private val eventRepository: EventRepository,

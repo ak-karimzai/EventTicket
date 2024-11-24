@@ -1,6 +1,8 @@
 package com.akkarimzai.eventticket.services.impl
 
+import com.akkarimzai.eventticket.annotations.Validate
 import com.akkarimzai.eventticket.entities.Event
+import com.akkarimzai.eventticket.exceptions.BadRequestException
 import com.akkarimzai.eventticket.exceptions.NotFoundException
 import com.akkarimzai.eventticket.models.event.CreateEventCommand
 import com.akkarimzai.eventticket.models.event.EventDto
@@ -12,12 +14,12 @@ import com.akkarimzai.eventticket.repositories.CategoryRepository
 import com.akkarimzai.eventticket.repositories.EventRepository
 import com.akkarimzai.eventticket.repositories.specs.EventSpecification
 import mu.KotlinLogging
-import org.apache.coyote.BadRequestException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
+@Validate
 class EventService(
     private val categoryRepository: CategoryRepository,
     private val eventRepository: EventRepository) {

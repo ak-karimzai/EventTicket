@@ -1,5 +1,6 @@
 package com.akkarimzai.eventticket.services.impl
 
+import com.akkarimzai.eventticket.annotations.Validate
 import com.akkarimzai.eventticket.entities.Category
 import com.akkarimzai.eventticket.exceptions.NotFoundException
 import com.akkarimzai.eventticket.models.category.CategoryDto
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
+@Validate
 class CategoryService(private val repository: CategoryRepository) {
     private val logger = KotlinLogging.logger {}
 
