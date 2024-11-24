@@ -1,22 +1,44 @@
 package com.akkarimzai.eventticket.models.user
 
-import jakarta.validation.constraints.Email
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Size
-
+import com.akkarimzai.eventticket.models.common.AbstractValidatableCQ
+import org.valiktor.functions.hasSize
+import org.valiktor.functions.isEmail
+import org.valiktor.functions.isNotBlank
+import org.valiktor.validate
 data class RegisterCommand(
-    @NotBlank @Size(min = 3, max = 60)
     val name: String,
 
-    @Email
     val email: String,
 
-    @Size(min = 5, max = 40)
     val phoneNumber: String? = null,
 
-    @NotBlank @Size(min = 3, max = 60)
     val username: String,
 
-    @NotBlank @Size(min = 6, max = 60)
     val password: String,
-)
+): AbstractValidatableCQ() {
+    override fun dataValidator() {
+        validate(this) {
+            validate(RegisterCommand::name)
+                .isNotBlank()
+                .hasSize(min = 3, max = 60)
+
+            validate(RegisterCommand::email)
+                .isNotBlank()
+                .isEmail()
+
+            phoneNumber?.let {
+                validate(RegisterCommand::phoneNumber)
+                    .isNotBlank()
+                    .hasSize(min = 5, max = 40)
+            }
+
+            validate(RegisterCommand::username)
+                .isNotBlank()
+                .hasSize(min = 3, max = 60)
+
+            validate(RegisterCommand::password)
+                .isNotBlank()
+                .hasSize(min = 6, max = 60)
+        }
+    }
+}

@@ -1,10 +1,20 @@
 package com.akkarimzai.eventticket.models.order
 
-import jakarta.validation.constraints.Min
+import com.akkarimzai.eventticket.models.common.AbstractValidatableCQ
+import org.valiktor.functions.isGreaterThanOrEqualTo
+import org.valiktor.validate
 
 data class CommandItemDto(
-    @Min(1)
     val ticketId: Long,
-    @Min(0)
     val count: Int
-)
+): AbstractValidatableCQ() {
+    override fun dataValidator() {
+        validate(this) {
+            validate(CommandItemDto::ticketId)
+                .isGreaterThanOrEqualTo(1)
+
+            validate(CommandItemDto::count)
+                .isGreaterThanOrEqualTo(0)
+        }
+    }
+}

@@ -1,20 +1,44 @@
 package com.akkarimzai.eventticket.models.event
 
-import com.akkarimzai.eventticket.annotations.AtLeastOneNotNull
-import jakarta.validation.constraints.FutureOrPresent
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Size
+import com.akkarimzai.eventticket.exceptions.BadRequestException
+import com.akkarimzai.eventticket.models.common.AbstractValidatableCQ
+import org.valiktor.functions.hasSize
+import org.valiktor.functions.isNotBlank
+import org.valiktor.validate
 import java.time.LocalDateTime
 
-@AtLeastOneNotNull
 class UpdateEventCommand(
-    @NotBlank
-    @Size(min = 3, max = 256)
     val title: String?,
 
-    @NotBlank
-    @Size(min = 3, max = 256)
     val artist: String?,
 
     val date: LocalDateTime?
-)
+): AbstractValidatableCQ() {
+    override fun dataValidator() {
+        validate(this) {
+            var count = 0
+            title?.let {
+                validate(UpdateEventCommand::title)
+                    .isNotBlank()
+                    .hasSize(min = 3, max = 256)
+                count++
+            }
+
+            artist?.let {
+                validate(UpdateEventCommand::artist)
+                    .isNotBlank()
+                    .hasSize(min = 3, max = 256)
+                count++
+            }
+
+            date?.let {
+                // ToDo logic to validate date
+                count++
+            }
+
+            if (count == 0) {
+                throw BadRequestException("Nothing to update!")
+            }
+        }
+    }
+}

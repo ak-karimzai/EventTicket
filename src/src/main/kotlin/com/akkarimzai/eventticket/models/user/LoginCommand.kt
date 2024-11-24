@@ -1,12 +1,20 @@
 package com.akkarimzai.eventticket.models.user
 
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Size
+import com.akkarimzai.eventticket.models.common.AbstractValidatableCQ
+import org.valiktor.functions.hasSize
+import org.valiktor.validate
 
 data class LoginCommand(
-    @NotBlank @Size(min = 3, max = 60)
     val username: String,
-
-    @NotBlank @Size(min = 6, max = 60)
     val password: String
-)
+): AbstractValidatableCQ() {
+    override fun dataValidator() {
+        validate(this) {
+            validate(LoginCommand::username)
+                .hasSize(min = 3, max = 60)
+
+            validate(LoginCommand::password)
+                .hasSize(min = 6, max = 60)
+        }
+    }
+}

@@ -1,13 +1,29 @@
 package com.akkarimzai.eventticket.models.category
 
-import jakarta.validation.constraints.Min
-import jakarta.validation.constraints.Size
+import com.akkarimzai.eventticket.models.common.AbstractValidatableCQ
+import org.valiktor.functions.hasSize
+import org.valiktor.functions.isGreaterThanOrEqualTo
+import org.valiktor.functions.isLessThanOrEqualTo
+import org.valiktor.validate
 
 data class ListCategoryQuery(
-    @Size(min = 1, max = 126)
     val title: String?,
-    @Min(0)
     val page: Int,
-    @Min(1)
     val size: Int
-)
+): AbstractValidatableCQ() {
+    override fun dataValidator() {
+        validate(this) {
+            title?.let {
+                validate(ListCategoryQuery::title)
+                    .hasSize(min = 1, max = 126)
+            }
+
+            validate(ListCategoryQuery::page)
+                .isGreaterThanOrEqualTo(0)
+
+            validate(ListCategoryQuery::size)
+                .isGreaterThanOrEqualTo(1)
+                .isLessThanOrEqualTo(20)
+        }
+    }
+}

@@ -1,13 +1,31 @@
 package com.akkarimzai.eventticket.models.event
 
-import jakarta.validation.constraints.DecimalMin
-import jakarta.validation.constraints.Size
+import com.akkarimzai.eventticket.models.common.AbstractValidatableCQ
+import org.valiktor.functions.hasSize
+import org.valiktor.functions.isGreaterThanOrEqualTo
+import org.valiktor.functions.isNotBlank
+import org.valiktor.functions.isNotNull
+import org.valiktor.validate
 
 data class EventTicketDto(
-    @Size(min = 3, max = 256)
     val title: String,
-    @Size(min = 3, max = 256)
     val description: String?,
-    @DecimalMin(value = "0.0", inclusive = true)
-    val price: Double,
-)
+    val price: Double
+) : AbstractValidatableCQ() {
+    override fun dataValidator() {
+        validate(this) {
+            validate(EventTicketDto::title)
+                .isNotBlank()
+                .hasSize(min = 3, max = 256)
+
+            description?.let {
+                validate(EventTicketDto::description)
+                    .hasSize(min = 3, max = 256)
+            }
+
+            validate(EventTicketDto::price)
+                .isNotNull()
+                .isGreaterThanOrEqualTo(0.0)
+        }
+    }
+}
