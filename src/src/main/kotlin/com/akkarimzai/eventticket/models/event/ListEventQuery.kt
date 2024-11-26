@@ -9,7 +9,7 @@ import org.valiktor.validate
 import java.time.LocalDateTime
 
 data class ListEventQuery(
-    val categoryId: Long?,
+    val categoryId: Long? = null,
     val title: String?,
     val artist: String?,
     val from: LocalDateTime?,

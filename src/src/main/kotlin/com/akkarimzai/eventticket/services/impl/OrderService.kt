@@ -3,6 +3,7 @@ package com.akkarimzai.eventticket.services.impl
 import com.akkarimzai.eventticket.annotations.Validate
 import com.akkarimzai.eventticket.entities.Order
 import com.akkarimzai.eventticket.exceptions.NotFoundException
+import com.akkarimzai.eventticket.exceptions.PermissionException
 import com.akkarimzai.eventticket.models.order.CreateOrderCommand
 import com.akkarimzai.eventticket.models.order.ListOrderQuery
 import com.akkarimzai.eventticket.models.order.OrderDto
@@ -25,18 +26,19 @@ class OrderService(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    fun load(orderId: Long): Order {
+    fun load(orderId: Long): OrderDto {
         logger.info { "loading order with id: $orderId" }
 
-        return orderRepository.findById(orderId).orElseThrow {
-            logger.debug { "order with id: $orderId not found" }
-
-            throw NotFoundException("order", orderId)
-        }
+        return loadById(orderId).toDto()
     }
 
-    fun list(userId: Long, query: ListOrderQuery): Page<OrderDto> {
-        logger.info { "request list for user: $userId" }
+    fun list(query: ListOrderQuery): Page<OrderDto> {
+        logger.info { "request list with query: $query" }
+
+        val currentUser = authService.currentUser()
+        val userId = currentUser.id
+
+        logger.info { "requested user id: $userId" }
 
         return orderRepository
             .findAll(PageRequest.of(query.page, query.size))
@@ -57,9 +59,24 @@ class OrderService(
     fun update(orderId: Long, command: UpdateOrderCommand) {
         logger.info { "request update for order: $command" }
 
-        val order = load(orderId)
+        val order = loadById(orderId)
         val updatedOrder = command.toOrder(order, ticketRepository)
 
         orderRepository.save(updatedOrder)
+    }
+
+    private fun loadById(orderId: Long): Order {
+        val order = orderRepository.findById(orderId).orElseThrow {
+            logger.debug { "order with id: $orderId not found" }
+
+            throw NotFoundException("order", orderId)
+        }
+
+        if (order.user.id != authService.currentUser().id) {
+            logger.debug { "Order: $orderId not related to authorized user" }
+            throw PermissionException("Permission denied")
+        }
+
+        return order
     }
 }

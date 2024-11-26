@@ -26,13 +26,13 @@ class TicketService(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    fun load(eventId: Long, ticketId: Long): TicketDto {
+    fun load(categoryId: Long, eventId: Long, ticketId: Long): TicketDto {
         logger.info { "loading ticket with id: $ticketId" }
 
-        return loadById(eventId, ticketId).toDto()
+        return loadById(categoryId, eventId, ticketId).toDto()
     }
 
-    fun create(eventId: Long, command: CreateTicketCommand): Long {
+    fun create(categoryId: Long, eventId: Long, command: CreateTicketCommand): Long {
         logger.info { "Request create: $command" }
 
         val event = eventRepository.findById(eventId).orElseThrow {
@@ -45,28 +45,22 @@ class TicketService(
         }
     }
 
-    fun update(eventId: Long, ticketId: Long, command: UpdateTicketCommand) {
+    fun update(categoryId: Long, eventId: Long, ticketId: Long, command: UpdateTicketCommand) {
         logger.info { "request update: $command" }
 
-        val ticket = loadById(eventId, ticketId)
+        val ticket = loadById(categoryId, eventId, ticketId)
         val ticketToUpdate = command.toTicket(ticket)
         ticketRepository.save(ticketToUpdate).also {
             logger.debug { "ticket with id $ticketId updated" }
         }
     }
 
-    fun list(eventId: Long?, query: ListTicketQuery): Page<TicketDto> {
+    fun list(query: ListTicketQuery): Page<TicketDto> {
         logger.info { "request list with query: $query" }
 
-        eventId?.let {
-            if (it <= 0) {
-                logger.error { "invalid id: $eventId <= 0" }
-                throw BadRequestException("invalid event id!")
-            }
-        }
-
         return ticketRepository.findAll(TicketSpecification.buildSpecification(
-            eventId = eventId,
+            categoryId = query.categoryId,
+            eventId = query.eventId,
             title = query.title),
             pageable = PageRequest.of(query.page, query.size)
         ).map { it.toDto() }.also {
@@ -74,7 +68,12 @@ class TicketService(
         }
     }
 
-    private fun loadById(eventId: Long, ticketId: Long): Ticket {
+    private fun loadById(categoryId: Long, eventId: Long, ticketId: Long): Ticket {
+        if (categoryId <= 0) {
+            logger.debug { "category id: $categoryId <= 0" }
+            throw BadRequestException("invalid category id!")
+        }
+
         if (eventId <= 0) {
             logger.debug { "event id: $eventId <= 0" }
             throw BadRequestException("invalid event id!")
@@ -91,7 +90,7 @@ class TicketService(
             NotFoundException("ticket", ticketId)
         }
 
-        if (ticket.event?.id != eventId) {
+        if (ticket.event?.id != eventId || ticket.event?.category?.id != categoryId) {
             logger.error { "blocking user to access ticket: $ticketId " +
                     "with invalid $ticketId" }
             throw NotFoundException("ticket", ticketId)

@@ -135,7 +135,8 @@ class EventServiceTest : FunSpec({
 
     test("list events - valid query") {
         // Arrange
-        val query = ListEventQuery("Event", "Artist", LocalDateTime.now(), LocalDateTime.now().plusDays(1), 0, 10)
+        val query = ListEventQuery(title = "Event", artist = "Artist", from =  LocalDateTime.now(),
+            to = LocalDateTime.now().plusDays(1), page = 0, size = 10)
         val eventPage = PageImpl(listOf(Event(1L, "Event 1", "Artist 1", LocalDateTime.now(), mutableListOf(), Category(1L, "Category 1"))))
 
         every { eventRepository.findAll(any(), any()) } returns eventPage
@@ -150,7 +151,7 @@ class EventServiceTest : FunSpec({
 
     test("list events - empty result") {
         // Arrange
-        val query = ListEventQuery("Event", "Artist", LocalDateTime.now(), LocalDateTime.now().plusDays(1), 0, 10)
+        val query = ListEventQuery(categoryId = null, "Event", "Artist", LocalDateTime.now(), LocalDateTime.now().plusDays(1), 0, 10)
         val eventPage = PageImpl(listOf<Event>())
 
         every { eventRepository.findAll(any(), any()) } returns eventPage

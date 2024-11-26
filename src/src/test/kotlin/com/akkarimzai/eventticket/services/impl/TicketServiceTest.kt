@@ -38,7 +38,7 @@ class TicketServiceTest : FunSpec({
         every { ticketRepository.findById(ticketId) } returns Optional.of(ticket)
 
         // Act
-        val result = ticketService.load(eventId, ticketId)
+        val result = ticketService.load(categoryId, eventId, ticketId)
 
         // Assert
         result shouldBe ticketDto
@@ -51,7 +51,7 @@ class TicketServiceTest : FunSpec({
 
         // Act & Assert
         shouldThrow<NotFoundException> {
-            ticketService.load(eventId, ticketId)
+            ticketService.load(categoryId, eventId, ticketId)
         }
     }
 
@@ -62,7 +62,7 @@ class TicketServiceTest : FunSpec({
         every { ticketRepository.save(any()) } returns ticket
 
         // Act
-        val result = ticketService.create(eventId, createTicketCommand)
+        val result = ticketService.create(categoryId, eventId, createTicketCommand)
 
         // Assert
         result shouldBe ticketId
@@ -77,7 +77,7 @@ class TicketServiceTest : FunSpec({
         every { ticketRepository.save(any()) } returns ticket
 
         // Act
-        ticketService.update(eventId, ticketId, updateTicketCommand)
+        ticketService.update(categoryId, eventId, ticketId, updateTicketCommand)
 
         // Assert
         verify { ticketRepository.save(any()) }
@@ -91,7 +91,7 @@ class TicketServiceTest : FunSpec({
         every { ticketRepository.findAll(any(), any<PageRequest>()) } returns page
 
         // Act
-        val result = ticketService.list(eventId, listTicketQuery)
+        val result = ticketService.list(listTicketQuery)
 
         // Assert
         result.content.size shouldBe 1
@@ -101,7 +101,7 @@ class TicketServiceTest : FunSpec({
     test("should throw BadRequestException when event id is invalid") {
         // Arrange && Act && Assert
         shouldThrow<BadRequestException> {
-            ticketService.load(0, ticketId)
+            ticketService.load(categoryId, 0, ticketId)
         }
     }
 
@@ -113,7 +113,7 @@ class TicketServiceTest : FunSpec({
 
         // Act && Assert
         shouldThrow<NotFoundException> {
-            ticketService.load(eventId, ticketId)
+            ticketService.load(categoryId, eventId + 10, ticketId)
         }
     }
 })
