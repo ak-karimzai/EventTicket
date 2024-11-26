@@ -68,6 +68,7 @@ class EventService(
 
         return eventRepository.findAll(
             EventSpecification.buildSpecification(
+                categoryId = query.categoryId,
                 title = query.title,
                 artist = query.artist,
                 from = query.from,

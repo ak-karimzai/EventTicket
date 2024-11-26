@@ -1,5 +1,6 @@
 package com.akkarimzai.eventticket.repositories.specs
 
+import com.akkarimzai.eventticket.entities.Category_
 import com.akkarimzai.eventticket.entities.Event
 import com.akkarimzai.eventticket.entities.Event_
 import jakarta.persistence.criteria.Predicate
@@ -7,9 +8,15 @@ import org.springframework.data.jpa.domain.Specification
 import java.time.LocalDateTime
 
 object EventSpecification {
-    fun buildSpecification(title: String?, artist: String?, from: LocalDateTime?, to: LocalDateTime?): Specification<Event> {
+    fun buildSpecification(categoryId: Long?, title: String?, artist: String?, from: LocalDateTime?, to: LocalDateTime?): Specification<Event> {
         return Specification<Event> { root, _, criteriaBuilder ->
             val predicates = mutableListOf<Predicate>()
+
+            categoryId?.let {
+                predicates.add(
+                    criteriaBuilder.equal(root.get(Event_.category).get(Category_.id), categoryId)
+                )
+            }
 
             title?.let {
                 predicates.add(
