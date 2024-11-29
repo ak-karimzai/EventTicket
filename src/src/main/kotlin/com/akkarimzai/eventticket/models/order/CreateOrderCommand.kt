@@ -1,12 +1,13 @@
 package com.akkarimzai.eventticket.models.order
 
 import com.akkarimzai.eventticket.models.common.AbstractValidatableCQ
+import com.akkarimzai.eventticket.models.orderItem.CreateOrderItemCommand
 import org.valiktor.functions.hasSize
 import org.valiktor.functions.validateForEach
 import org.valiktor.validate
 
 data class CreateOrderCommand(
-    val items: List<CommandItemDto>
+    val items: List<CreateOrderItemCommand>
 ): AbstractValidatableCQ() {
     override fun dataValidator() {
         validate(this) {

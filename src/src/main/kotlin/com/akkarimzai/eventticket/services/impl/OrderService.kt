@@ -3,7 +3,7 @@ package com.akkarimzai.eventticket.services.impl
 import com.akkarimzai.eventticket.annotations.Validate
 import com.akkarimzai.eventticket.entities.Order
 import com.akkarimzai.eventticket.exceptions.NotFoundException
-import com.akkarimzai.eventticket.exceptions.PermissionException
+import com.akkarimzai.eventticket.exceptions.ForbiddenException
 import com.akkarimzai.eventticket.models.order.CreateOrderCommand
 import com.akkarimzai.eventticket.models.order.ListOrderQuery
 import com.akkarimzai.eventticket.models.order.OrderDto
@@ -74,7 +74,7 @@ class OrderService(
 
         if (order.user.id != authService.currentUser().id) {
             logger.debug { "Order: $orderId not related to authorized user" }
-            throw PermissionException("Permission denied")
+            throw ForbiddenException("Permission denied")
         }
 
         return order

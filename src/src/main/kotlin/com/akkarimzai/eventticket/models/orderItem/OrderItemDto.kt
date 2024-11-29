@@ -1,4 +1,4 @@
-package com.akkarimzai.eventticket.models.order
+package com.akkarimzai.eventticket.models.orderItem
 
 import com.akkarimzai.eventticket.models.ticket.TicketDto
 

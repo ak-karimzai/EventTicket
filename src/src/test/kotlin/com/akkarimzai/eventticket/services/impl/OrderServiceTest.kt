@@ -31,7 +31,6 @@ class OrderServiceTest : FunSpec({
     val orderService = OrderService(orderRepository, ticketRepository, authService)
 
     val orderId = 1L
-    val userId = 123L
 
     val user = User(id = 1L, name = "testtest", email = "email@mail.ru",
         phoneNumber = null, "username", "password", role = Role.USER)
@@ -40,7 +39,6 @@ class OrderServiceTest : FunSpec({
     val order = Order(id = 1L, user = user, orderPlaced = LocalDateTime.now(),
         orderPaid = true, items = mutableListOf()
     )
-    val orderDto = order.toDto()
 
     beforeEach {
         clearMocks(orderRepository, ticketRepository, authService)
@@ -74,7 +72,7 @@ class OrderServiceTest : FunSpec({
         every { orderRepository.findAll(PageRequest.of(0, 10)) } returns page
 
         // Act
-        val result = orderService.list(userId, ListOrderQuery(0, 10))
+        val result = orderService.list(ListOrderQuery(0, 10))
 
         // Assert
         result.content shouldBe orders.map { it.toDto() }
