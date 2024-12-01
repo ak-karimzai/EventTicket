@@ -7,9 +7,15 @@ import org.valiktor.functions.hasSize
 import org.valiktor.functions.validateForEach
 import org.valiktor.validate
 
+import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.constraints.Size
+
+@Schema(description = "Command to update an order")
 data class UpdateOrderCommand(
+    @Schema(description = "List of order items to update", example = "[{...}]", required = false)
+    @Size(min = 1, max = 20)
     val items: List<CreateOrderItemCommand>?
-): AbstractValidatableCQ() {
+) : AbstractValidatableCQ() {
     override fun dataValidator() {
         validate(this) {
             var count = 0

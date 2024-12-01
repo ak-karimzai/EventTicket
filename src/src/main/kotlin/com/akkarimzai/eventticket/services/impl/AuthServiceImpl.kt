@@ -25,7 +25,12 @@ class AuthServiceImpl(
 
     override fun currentUser(): User {
         val authentication = SecurityContextHolder.getContext().authentication
-        val username = authentication?.name ?: throw UnauthorizedException("User not authenticated")
+        val username = authentication?.name
+
+        if (username == null) {
+            logger.debug { "User context not exist" }
+            throw UnauthorizedException("User not authorized!")
+        }
 
         logger.info { "Current user: $username" }
 

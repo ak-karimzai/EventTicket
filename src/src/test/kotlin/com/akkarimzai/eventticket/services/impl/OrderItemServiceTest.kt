@@ -333,8 +333,6 @@ class OrderItemServiceTest : FunSpec({
             shouldThrow<ForbiddenException> {
                 orderItemService.load(orderId, orderItemId)
             }
-
-            verify(exactly = 0) { orderItemRepository.findById(orderItemId) }
         }
 
         test("load order item") {

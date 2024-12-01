@@ -1,3 +1,9 @@
 package com.akkarimzai.eventticket.models.user
 
-data class AuthResponse(val token: String)
+import io.swagger.v3.oas.annotations.media.Schema
+
+@Schema(description = "Authentication response")
+data class AuthResponse(
+    @Schema(description = "Authentication token", example = "abc123", required = true)
+    val token: String
+)

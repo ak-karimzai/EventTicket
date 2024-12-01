@@ -34,7 +34,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-hateoas")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-//    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.valiktor:valiktor-core:0.12.0")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     annotationProcessor("org.hibernate:hibernate-jpamodelgen:6.5.3.Final")
@@ -45,6 +45,9 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     implementation("org.apache.commons:commons-lang3:3.0")
+
+    implementation("io.swagger.core.v3:swagger-annotations:2.2.26")
+    implementation("io.swagger.core.v3:openapi-annotations:2.2.26")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 

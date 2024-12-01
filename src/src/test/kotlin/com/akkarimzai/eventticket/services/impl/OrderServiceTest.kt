@@ -47,12 +47,13 @@ class OrderServiceTest : FunSpec({
     test("load should return order when order exists") {
         // Arrange
         every { orderRepository.findById(orderId) } returns Optional.of(order)
+        every { authService.currentUser() } returns user
 
         // Act
         val result = orderService.load(orderId)
 
         // Assert
-        result shouldBe order
+        result shouldBe order.toDto()
     }
 
     test("load should throw NotFoundException when order does not exist") {
@@ -70,6 +71,7 @@ class OrderServiceTest : FunSpec({
         val orders = listOf(order)
         val page = PageImpl(orders)
         every { orderRepository.findAll(PageRequest.of(0, 10)) } returns page
+        every { authService.currentUser() } returns user
 
         // Act
         val result = orderService.list(ListOrderQuery(0, 10))
@@ -97,6 +99,7 @@ class OrderServiceTest : FunSpec({
         val updatedOrder = command.toOrder(order, ticketRepository)
         every { orderRepository.findById(orderId) } returns Optional.of(order)
         every { orderRepository.save(updatedOrder) } returns updatedOrder
+        every { authService.currentUser() } returns user
 
         // Act
         orderService.update(orderId, command)

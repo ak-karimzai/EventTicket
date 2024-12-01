@@ -6,15 +6,28 @@ import org.valiktor.validate
 import org.valiktor.functions.hasSize
 import org.valiktor.functions.isGreaterThanOrEqualTo
 
+import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.constraints.DecimalMin
+import jakarta.validation.constraints.Size
+
+@Schema(description = "Command to update a ticket")
 class UpdateTicketCommand(
+    @Schema(description = "New ticket title", example = "Updated Event", required = false)
+    @Size(min = 3, max = 256)
     val title: String?,
+
+    @Schema(description = "New ticket description", example = "This is an updated event", required = false)
+    @Size(min = 3, max = 256)
     val description: String?,
-    val price: Double?,
-): AbstractValidatableCQ() {
+
+    @Schema(description = "New ticket price", example = "11.99", required = false)
+    @get:DecimalMin(value = "0.0")
+    val price: Double?
+) : AbstractValidatableCQ() {
     override fun dataValidator() {
         validate(this) {
             var count = 0
-            description?.let {
+            title?.let {
                 validate(UpdateTicketCommand::title)
                     .hasSize(min = 3, max = 256)
                 count++
