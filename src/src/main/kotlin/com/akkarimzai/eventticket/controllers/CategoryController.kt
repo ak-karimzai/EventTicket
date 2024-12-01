@@ -1,4 +1,4 @@
-package com.akkarimzai.eventticket.controllers.impl
+package com.akkarimzai.eventticket.controllers
 
 import com.akkarimzai.eventticket.annotations.LogExecutionTime
 import com.akkarimzai.eventticket.controllers.middlewares.ErrorResponse

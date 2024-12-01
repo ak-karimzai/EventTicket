@@ -46,8 +46,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     implementation("org.apache.commons:commons-lang3:3.0")
 
-    implementation("io.swagger.core.v3:swagger-annotations:2.2.26")
-    implementation("io.swagger.core.v3:openapi-annotations:2.2.26")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 

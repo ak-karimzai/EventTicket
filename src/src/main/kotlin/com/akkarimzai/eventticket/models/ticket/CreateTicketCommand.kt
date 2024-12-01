@@ -6,6 +6,7 @@ import org.valiktor.functions.isGreaterThanOrEqualTo
 import org.valiktor.validate
 
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.Size
 
@@ -20,7 +21,7 @@ data class CreateTicketCommand(
     val description: String?,
 
     @Schema(description = "Ticket price", example = "10.99", required = true)
-    @get:Min(0.0)
+    @get:DecimalMin(value = "0.0")
     val price: Double
 ) : AbstractValidatableCQ() {
     override fun dataValidator() {

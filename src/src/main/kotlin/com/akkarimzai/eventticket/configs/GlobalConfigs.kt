@@ -60,12 +60,13 @@ class GlobalConfigs(
             }
             .authorizeHttpRequests { request ->
                 request
-                    .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole(Role.ADMIN.name, Role.USER.name)
-                    .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole(Role.ADMIN.name, Role.USER.name)
-                    .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole(Role.ADMIN.name)
-                    .anyRequest().authenticated()
+//                    .requestMatchers("/api/auth/**").permitAll()
+//                    .requestMatchers("/swagger-ui/**").permitAll()
+//                    .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+//                    .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole(Role.ADMIN.name, Role.USER.name)
+//                    .requestMatchers(HttpMethod.PUT, "/api/**").hasAnyRole(Role.ADMIN.name, Role.USER.name)
+//                    .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole(Role.ADMIN.name)
+                    .anyRequest().permitAll()
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authenticationProvider(authenticationProvider(userService, passwordEncoder()))
