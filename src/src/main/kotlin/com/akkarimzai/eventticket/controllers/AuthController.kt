@@ -1,9 +1,11 @@
-package com.akkarimzai.eventticket.controllers.api
+package com.akkarimzai.eventticket.controllers.impl
 
+import com.akkarimzai.eventticket.annotations.LogExecutionTime
 import com.akkarimzai.eventticket.controllers.middlewares.ErrorResponse
 import com.akkarimzai.eventticket.models.user.AuthResponse
 import com.akkarimzai.eventticket.models.user.LoginCommand
 import com.akkarimzai.eventticket.models.user.RegisterCommand
+import com.akkarimzai.eventticket.services.AuthService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
@@ -12,9 +14,14 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
+@RestController
+@RequestMapping(value = ["/api/v1/auth"])
 @Tag(name = "Auth API", description = "API for managing user authentication")
-interface AuthControllerApi {
+@LogExecutionTime
+class AuthController(private val AuthService: AuthService) {
     @PostMapping("/register")
     @Operation(
         summary = "Register a new user",
@@ -40,7 +47,7 @@ interface AuthControllerApi {
             required = true
         )
         command: RegisterCommand
-    ): AuthResponse
+    ): AuthResponse = AuthService.register(command)
 
     @PostMapping("/login")
     @Operation(
@@ -72,5 +79,5 @@ interface AuthControllerApi {
             required = true
         )
         command: LoginCommand
-    ): AuthResponse
+    ): AuthResponse = AuthService.login(command)
 }

@@ -1,36 +1,28 @@
-package com.akkarimzai.eventticket.controllers
+package com.akkarimzai.eventticket.controllers.impl
 
 import com.akkarimzai.eventticket.annotations.LogExecutionTime
+import com.akkarimzai.eventticket.controllers.middlewares.ErrorResponse
 import com.akkarimzai.eventticket.models.order.CreateOrderCommand
 import com.akkarimzai.eventticket.models.order.ListOrderQuery
 import com.akkarimzai.eventticket.models.order.OrderDto
 import com.akkarimzai.eventticket.models.order.UpdateOrderCommand
 import com.akkarimzai.eventticket.services.impl.OrderService
-import org.springframework.data.web.PagedResourcesAssembler
-import org.springframework.hateoas.EntityModel
-import org.springframework.hateoas.PagedModel
-
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.data.web.PagedResourcesAssembler
+import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.PagedModel
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping(value = ["/api/v1/orders"])
 @Tag(name = "Order API", description = "API for managing orders")
 @LogExecutionTime
 class OrderController(private val orderService: OrderService) {
-
     @GetMapping
     @Operation(
         summary = "Get a list of orders",
@@ -40,6 +32,21 @@ class OrderController(private val orderService: OrderService) {
                 responseCode = "200",
                 description = "List of orders",
                 content = [Content(schema = Schema(implementation = PagedModel::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid query parameters",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Permission denied",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )
@@ -75,6 +82,21 @@ class OrderController(private val orderService: OrderService) {
                 responseCode = "200",
                 description = "Order",
                 content = [Content(schema = Schema(implementation = OrderDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid input",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Permission denied",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )
@@ -97,6 +119,21 @@ class OrderController(private val orderService: OrderService) {
                 responseCode = "201",
                 description = "Order created",
                 content = [Content(schema = Schema(implementation = Long::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid input",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Permission denied",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )
@@ -118,6 +155,21 @@ class OrderController(private val orderService: OrderService) {
             ApiResponse(
                 responseCode = "200",
                 description = "Order updated"
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid input",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Permission denied",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )

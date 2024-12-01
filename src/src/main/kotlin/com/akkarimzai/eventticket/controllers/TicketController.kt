@@ -1,29 +1,22 @@
-package com.akkarimzai.eventticket.controllers
+package com.akkarimzai.eventticket.controllers.impl
 
 import com.akkarimzai.eventticket.annotations.LogExecutionTime
+import com.akkarimzai.eventticket.controllers.middlewares.ErrorResponse
 import com.akkarimzai.eventticket.models.ticket.CreateTicketCommand
 import com.akkarimzai.eventticket.models.ticket.ListTicketQuery
 import com.akkarimzai.eventticket.models.ticket.TicketDto
 import com.akkarimzai.eventticket.models.ticket.UpdateTicketCommand
 import com.akkarimzai.eventticket.services.impl.TicketService
-import org.springframework.data.web.PagedResourcesAssembler
-import org.springframework.hateoas.EntityModel
-import org.springframework.hateoas.PagedModel
-
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.data.web.PagedResourcesAssembler
+import org.springframework.hateoas.EntityModel
+import org.springframework.hateoas.PagedModel
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping(value = ["/api/v1/categories/{categoryId}/events/{eventId}/tickets"])
@@ -80,10 +73,15 @@ class TicketController(private val ticketService: TicketService) {
         size: Int = 10,
         assembler: PagedResourcesAssembler<TicketDto>,
     ): PagedModel<EntityModel<TicketDto>> {
-        val ticketList =  ticketService.list(
+        val ticketList = ticketService.list(
             query = ListTicketQuery(
-                categoryId = categoryId, eventId = eventId,
-                title = title, page = page, size = size))
+                categoryId = categoryId,
+                eventId = eventId,
+                title = title,
+                page = page,
+                size = size
+            )
+        )
         return assembler.toModel(ticketList)
     }
 
@@ -121,8 +119,7 @@ class TicketController(private val ticketService: TicketService) {
             required = true
         )
         ticketId: Long
-    ): TicketDto = ticketService.load(
-        categoryId = categoryId, eventId = eventId, ticketId = ticketId)
+    ): TicketDto = ticketService.load(categoryId, eventId, ticketId)
 
     @PostMapping
     @Operation(
@@ -133,6 +130,21 @@ class TicketController(private val ticketService: TicketService) {
                 responseCode = "201",
                 description = "Ticket created",
                 content = [Content(schema = Schema(implementation = Long::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid input",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Permission denied",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )
@@ -168,6 +180,21 @@ class TicketController(private val ticketService: TicketService) {
             ApiResponse(
                 responseCode = "200",
                 description = "Ticket updated"
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid input",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Permission denied",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )
