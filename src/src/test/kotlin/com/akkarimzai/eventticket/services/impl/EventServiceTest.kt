@@ -10,6 +10,7 @@ import com.akkarimzai.eventticket.models.event.UpdateEventCommand
 import com.akkarimzai.eventticket.profiles.toDto
 import com.akkarimzai.eventticket.repositories.CategoryRepository
 import com.akkarimzai.eventticket.repositories.EventRepository
+import com.akkarimzai.eventticket.services.AuthService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -24,7 +25,8 @@ import java.util.*
 class EventServiceTest : FunSpec({
     val categoryRepository = mockk<CategoryRepository>()
     val eventRepository = mockk<EventRepository>()
-    val eventService = EventService(categoryRepository, eventRepository)
+    val authService = mockk<AuthService>()
+    val eventService = EventService(categoryRepository, eventRepository, authService)
 
     beforeTest {
         clearMocks(categoryRepository, eventRepository)

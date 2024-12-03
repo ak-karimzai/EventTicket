@@ -7,6 +7,9 @@ import com.akkarimzai.eventticket.models.category.ListCategoryQuery
 import com.akkarimzai.eventticket.models.category.UpdateCategoryCommand
 import com.akkarimzai.eventticket.profiles.toDto
 import com.akkarimzai.eventticket.repositories.CategoryRepository
+import com.akkarimzai.eventticket.repositories.EventRepository
+import com.akkarimzai.eventticket.repositories.TicketRepository
+import com.akkarimzai.eventticket.services.AuthService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldBeEmpty
@@ -20,7 +23,10 @@ import java.util.*
 
 class CategoryServiceTest : FunSpec({
     val repository = mockk<CategoryRepository>()
-    val service = CategoryService(repository)
+    val eventRepository = mockk<EventRepository>()
+    val ticketRepository = mockk<TicketRepository>()
+    val authService = mockk<AuthService>()
+    val service = CategoryService(repository, eventRepository, ticketRepository, authService)
 
     test("load should return category DTO when category exists") {
         // Arrange

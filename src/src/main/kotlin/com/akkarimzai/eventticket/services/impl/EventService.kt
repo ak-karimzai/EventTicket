@@ -13,6 +13,7 @@ import com.akkarimzai.eventticket.profiles.toEvent
 import com.akkarimzai.eventticket.repositories.CategoryRepository
 import com.akkarimzai.eventticket.repositories.EventRepository
 import com.akkarimzai.eventticket.repositories.specs.EventSpecification
+import com.akkarimzai.eventticket.services.AuthService
 import mu.KotlinLogging
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -22,7 +23,8 @@ import org.springframework.stereotype.Service
 @Validate
 class EventService(
     private val categoryRepository: CategoryRepository,
-    private val eventRepository: EventRepository) {
+    private val eventRepository: EventRepository,
+    private val authService: AuthService) {
     private val logger = KotlinLogging.logger {}
 
     fun create(categoryId: Long, command: CreateEventCommand): Long {
@@ -33,12 +35,13 @@ class EventService(
             throw BadRequestException("invalid category id: $categoryId!")
         }
 
+        val currentUser = authService.currentUser()
         val category = categoryRepository.findById(categoryId).orElseThrow {
             logger.debug { "category with id $categoryId not found" }
             NotFoundException("category", categoryId)
         }
 
-        val event = command.toEvent(category)
+        val event = command.toEvent(currentUser, category)
 
         return eventRepository.save(event).id!!.also {
             logger.debug { "new category with id {$categoryId} created" }
@@ -48,8 +51,9 @@ class EventService(
     fun update(categoryId: Long, eventId: Long, command: UpdateEventCommand) {
         logger.info { "updating event with id: $eventId, fields to update: $command" }
 
+        val currentUser = authService.currentUser()
         val event = loadById(categoryId, eventId)
-        val eventToUpdate = command.toEvent(event).also {
+        val eventToUpdate = command.toEvent(currentUser, event).also {
             logger.debug { "updated event: $it" }
         }
         eventRepository.save(eventToUpdate).also {

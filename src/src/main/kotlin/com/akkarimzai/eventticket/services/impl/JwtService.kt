@@ -35,7 +35,7 @@ class JwtService @Autowired constructor(
         val isValid: Boolean =  try {
             extractAllClaims(token)
             true
-        } catch (e: SignatureException) {
+        } catch (e: Exception) {
             false
         }
         return isValid

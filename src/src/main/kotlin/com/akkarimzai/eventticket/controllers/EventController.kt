@@ -106,6 +106,16 @@ class EventController(private val eventService: EventService){
                 responseCode = "200",
                 description = "Event",
                 content = [Content(schema = Schema(implementation = EventDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid id",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Event not found",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )

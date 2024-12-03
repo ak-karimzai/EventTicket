@@ -14,8 +14,8 @@ import jakarta.validation.constraints.Size
 @Schema(description = "Command to register")
 data class RegisterCommand(
     @Schema(description = "Full name", example = "John Doe", required = true)
-    @get:NotBlank
-    @get:Size(min = 3, max = 60)
+    @NotBlank
+    @Size(min = 3, max = 60)
     val name: String,
 
     @Schema(description = "Email address", example = "john.doe@example.com", required = true)

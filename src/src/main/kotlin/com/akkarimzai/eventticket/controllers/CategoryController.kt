@@ -16,12 +16,14 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.web.PagedResourcesAssembler
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.PagedModel
+import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping(value = ["/api/v1/categories"])
 @Tag(name = "Category API", description = "API for managing categories")
-@LogExecutionTime
+//@LogExecutionTime
 class CategoryController(private val categoryService: CategoryService) {
     @GetMapping
     @Operation(
@@ -95,6 +97,8 @@ class CategoryController(private val categoryService: CategoryService) {
             )
         ]
     )
+    @ResponseStatus(value = HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun create(
         @RequestBody
         @Parameter(
@@ -131,6 +135,8 @@ class CategoryController(private val categoryService: CategoryService) {
             )
         ]
     )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun update(
         @PathVariable
         @Parameter(
@@ -157,6 +163,11 @@ class CategoryController(private val categoryService: CategoryService) {
                 responseCode = "200",
                 description = "Category",
                 content = [Content(schema = Schema(implementation = CategoryDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Category not found",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )

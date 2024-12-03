@@ -6,7 +6,7 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @MappedSuperclass
-@EntityListeners(AuditableEntityListener::class)
+//@EntityListeners(AuditableEntityListener::class)
 abstract class AuditableEntity(
     id: Long?,
     @ManyToOne

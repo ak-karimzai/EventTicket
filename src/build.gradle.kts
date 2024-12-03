@@ -47,6 +47,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.0")
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    implementation("org.apache.commons:commons-lang3:3.17.0")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 

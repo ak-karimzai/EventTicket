@@ -94,6 +94,16 @@ class TicketController(private val ticketService: TicketService) {
                 responseCode = "200",
                 description = "Ticket",
                 content = [Content(schema = Schema(implementation = TicketDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid id",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Ticket not found",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]
     )

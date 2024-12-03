@@ -2,9 +2,11 @@ package com.akkarimzai.eventticket.profiles
 
 import com.akkarimzai.eventticket.entities.Event
 import com.akkarimzai.eventticket.entities.Ticket
+import com.akkarimzai.eventticket.entities.User
 import com.akkarimzai.eventticket.models.ticket.CreateTicketCommand
 import com.akkarimzai.eventticket.models.ticket.TicketDto
 import com.akkarimzai.eventticket.models.ticket.UpdateTicketCommand
+import java.time.LocalDateTime
 
 fun Ticket.toDto(): TicketDto {
     return TicketDto(
@@ -15,21 +17,25 @@ fun Ticket.toDto(): TicketDto {
     )
 }
 
-fun CreateTicketCommand.toTicket(event: Event): Ticket {
+fun CreateTicketCommand.toTicket(user: User, event: Event): Ticket {
     return Ticket(
         title = this.title,
         description = this.description,
         price = this.price,
         event = event,
-    )
+    ).also {
+        it.createdBy = user
+        it.createdDate = LocalDateTime.now()
+    }
 }
 
-fun UpdateTicketCommand.toTicket(ticket: Ticket): Ticket {
-    return Ticket(
-        id = ticket.id,
-        title = this.title ?: ticket.title,
-        description = this.description ?: ticket.description,
-        price = this.price ?: ticket.price,
-        event = ticket.event,
-    )
+fun UpdateTicketCommand.toTicket(user: User, ticket: Ticket): Ticket {
+    this.title?.let { ticket.title = it }
+    this.description?.let { ticket.description = it }
+    this.price?.let { ticket.price = it }
+
+    return ticket.also {
+        it.lastModifiedDate = LocalDateTime.now()
+        it.lastModifiedBy = user
+    }
 }

@@ -1,6 +1,7 @@
 package com.akkarimzai.eventticket.models.event
 
 import com.akkarimzai.eventticket.models.common.AbstractValidatableCQ
+import com.akkarimzai.eventticket.models.ticket.CreateTicketCommand
 import org.valiktor.validate
 import org.valiktor.functions.hasSize
 import org.valiktor.functions.isNotBlank
@@ -30,7 +31,7 @@ data class CreateEventCommand(
 
     @Schema(description = "List of tickets for the event", example = "[{...}]", required = true)
     @get:NotNull
-    val tickets: List<EventTicketDto>
+    val tickets: List<CreateTicketCommand>
 ) : AbstractValidatableCQ() {
     override fun dataValidator() {
         validate(this) {

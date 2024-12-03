@@ -20,7 +20,7 @@ data class CreateCategoryCommand(
 
     @Schema(description = "List of events to create with the category", example = "[{...}]", required = false)
     @get:Size(min = 0, max = 20)
-    val events: List<CreateEventCommand>?
+    val events: List<CreateEventCommand>? = null
 ): AbstractValidatableCQ() {
     override fun dataValidator() {
         validate(this) {

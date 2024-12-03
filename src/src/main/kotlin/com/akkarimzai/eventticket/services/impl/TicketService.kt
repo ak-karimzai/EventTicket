@@ -13,6 +13,7 @@ import com.akkarimzai.eventticket.profiles.toDto
 import com.akkarimzai.eventticket.repositories.EventRepository
 import com.akkarimzai.eventticket.repositories.TicketRepository
 import com.akkarimzai.eventticket.repositories.specs.TicketSpecification
+import com.akkarimzai.eventticket.services.AuthService
 import mu.KotlinLogging
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service
 class TicketService(
     private val ticketRepository: TicketRepository,
     private val eventRepository: EventRepository,
+    private val authService: AuthService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -35,10 +37,11 @@ class TicketService(
     fun create(categoryId: Long, eventId: Long, command: CreateTicketCommand): Long {
         logger.info { "Request create: $command" }
 
+        val currentUser = authService.currentUser()
         val event = eventRepository.findById(eventId).orElseThrow {
             NotFoundException("event", eventId)
         }
-        val ticket = command.toTicket(event)
+        val ticket = command.toTicket(currentUser, event)
 
         return ticketRepository.save(ticket).id!!.also {
             logger.info { "new ticket with id: $it created" }
@@ -48,8 +51,9 @@ class TicketService(
     fun update(categoryId: Long, eventId: Long, ticketId: Long, command: UpdateTicketCommand) {
         logger.info { "request update: $command" }
 
+        val currentUser = authService.currentUser()
         val ticket = loadById(categoryId, eventId, ticketId)
-        val ticketToUpdate = command.toTicket(ticket)
+        val ticketToUpdate = command.toTicket(currentUser, ticket)
         ticketRepository.save(ticketToUpdate).also {
             logger.debug { "ticket with id $ticketId updated" }
         }
