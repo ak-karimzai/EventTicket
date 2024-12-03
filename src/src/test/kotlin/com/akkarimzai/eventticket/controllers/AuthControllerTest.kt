@@ -53,8 +53,8 @@ class AuthControllerTest : AbstractIntegrationTest() {
     fun `should return conflict while user with same credentials are already exist`() {
         val request = RegisterCommand(
             name = "John Doe",
-            email = "Tq4lM@example.com",
-            username = "johndoe",
+            email = "Tq4lM2@example.com",
+            username = "johndoe2",
             password = "password"
         )
         webTestClient.post()
