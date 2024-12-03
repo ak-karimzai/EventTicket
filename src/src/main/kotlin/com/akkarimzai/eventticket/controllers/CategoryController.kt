@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(value = ["/api/v1/categories"])
 @Tag(name = "Category API", description = "API for managing categories")
-//@LogExecutionTime
+@LogExecutionTime
 class CategoryController(private val categoryService: CategoryService) {
     @GetMapping
     @Operation(

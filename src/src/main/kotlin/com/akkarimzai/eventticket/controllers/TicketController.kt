@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.web.PagedResourcesAssembler
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.PagedModel
+import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -158,6 +160,8 @@ class TicketController(private val ticketService: TicketService) {
             )
         ]
     )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(value = HttpStatus.CREATED)
     fun create(
         @PathVariable
         @Parameter(
@@ -208,6 +212,8 @@ class TicketController(private val ticketService: TicketService) {
             )
         ]
     )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun update(
         @PathVariable
         @Parameter(

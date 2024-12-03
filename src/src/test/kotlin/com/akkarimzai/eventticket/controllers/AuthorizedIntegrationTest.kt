@@ -5,17 +5,21 @@ import com.akkarimzai.eventticket.entities.User
 import com.akkarimzai.eventticket.models.user.AuthResponse
 import com.akkarimzai.eventticket.models.user.LoginCommand
 import com.akkarimzai.eventticket.repositories.UserRepository
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.reactive.server.WebTestClient
 
-open class AuthorizedIntegrationTest : AbstractIntegrationTest() {
+open class AuthorizedIntegrationTest(
+    private val userRepository: UserRepository,
+    private val webTestClient: WebTestClient,
+    private val passwordEncoder: PasswordEncoder
+) : AbstractIntegrationTest() {
     protected lateinit var adminToken: String
     protected lateinit var userToken: String
 
-    protected fun renewTokens(userRepository: UserRepository,
-                             webTestClient: WebTestClient,
-                             passwordEncoder: PasswordEncoder) {
+    @BeforeEach
+    protected fun renewTokens() {
         val admin = userRepository.findByUsername("adminadmin") ?: User(
             name = "Admin",
             email = "admin@admin.com",

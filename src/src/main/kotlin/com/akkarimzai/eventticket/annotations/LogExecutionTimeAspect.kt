@@ -23,7 +23,7 @@ class LogExecutionTimeAspect {
     @Around("logExecutionTimeMethod() || logExecutionTimeClass()")
     @Throws(Throwable::class)
     fun logExecutionTime(joinPoint: ProceedingJoinPoint) : Any? {
-        val result: Any
+        val result: Any?
         val duration = measureTime {
             result = joinPoint.proceed()
         }

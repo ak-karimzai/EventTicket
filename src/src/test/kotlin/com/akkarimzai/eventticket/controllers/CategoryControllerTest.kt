@@ -19,12 +19,7 @@ class CategoryControllerTest(
     @Autowired private val userRepository: UserRepository,
     @Autowired private val webTestClient: WebTestClient,
     @Autowired private val passwordEncoder: PasswordEncoder
-): AuthorizedIntegrationTest() {
-    @BeforeEach
-    fun `refresh tokens`() {
-        renewTokens(userRepository, webTestClient, passwordEncoder)
-    }
-
+): AuthorizedIntegrationTest(userRepository, webTestClient, passwordEncoder) {
     @Test
     fun `should create and load category`() {
         val request = CreateCategoryCommand(title = "test category")
@@ -105,5 +100,26 @@ class CategoryControllerTest(
                     .bodyValue(updateRequest)
                     .exchange().expectStatus().isNoContent
             }
+    }
+
+    @Test
+    fun `should return bad request on invalid command`() {
+        val request = UpdateCategoryCommand(title = "")
+
+        webTestClient.post()
+            .uri("/api/v1/categories")
+            .header("Authorization", "Bearer $adminToken")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(request)
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Test
+    fun `should load all categories for any user`() {
+        webTestClient.get()
+            .uri("/api/v1/categories")
+            .exchange()
+            .expectStatus().isOk
     }
 }

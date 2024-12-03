@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.web.PagedResourcesAssembler
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.PagedModel
+import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -50,6 +52,7 @@ class OrderController(private val orderService: OrderService) {
             )
         ]
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     fun list(
         @RequestParam
         @Parameter(
@@ -100,6 +103,7 @@ class OrderController(private val orderService: OrderService) {
             )
         ]
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     fun load(
         @PathVariable
         @Parameter(
@@ -137,6 +141,8 @@ class OrderController(private val orderService: OrderService) {
             )
         ]
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @ResponseStatus(value = HttpStatus.CREATED)
     fun create(
         @RequestBody
         @Parameter(
@@ -173,6 +179,8 @@ class OrderController(private val orderService: OrderService) {
             )
         ]
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun update(
         @PathVariable
         @Parameter(

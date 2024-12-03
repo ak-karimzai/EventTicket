@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.web.PagedResourcesAssembler
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.PagedModel
+import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
@@ -165,6 +167,8 @@ class EventController(private val eventService: EventService){
             )
         ]
     )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(value = HttpStatus.CREATED)
     fun create(
         @PathVariable
         @Parameter(
@@ -210,6 +214,8 @@ class EventController(private val eventService: EventService){
             )
         ]
     )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun update(
         @PathVariable
         @Parameter(

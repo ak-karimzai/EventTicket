@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.data.web.PagedResourcesAssembler
 import org.springframework.hateoas.EntityModel
 import org.springframework.hateoas.PagedModel
+import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -50,6 +52,7 @@ class OrderItemController(private val orderItemService: OrderItemService) {
             )
         ]
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     fun list(
         @PathVariable
         @Parameter(
@@ -107,6 +110,7 @@ class OrderItemController(private val orderItemService: OrderItemService) {
             )
         ]
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     fun load(
         @PathVariable
         @Parameter(
@@ -151,6 +155,8 @@ class OrderItemController(private val orderItemService: OrderItemService) {
             )
         ]
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @ResponseStatus(value = HttpStatus.CREATED)
     fun create(
         @PathVariable
         @Parameter(
@@ -194,6 +200,8 @@ class OrderItemController(private val orderItemService: OrderItemService) {
             )
         ]
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun update(
         @PathVariable
         @Parameter(
@@ -237,6 +245,8 @@ class OrderItemController(private val orderItemService: OrderItemService) {
             )
         ]
     )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     fun delete(
         @PathVariable
         @Parameter(
