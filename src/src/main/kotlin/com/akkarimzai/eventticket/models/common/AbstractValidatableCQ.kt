@@ -1,10 +1,11 @@
 package com.akkarimzai.eventticket.models.common
 
+import com.akkarimzai.eventticket.exceptions.ValidationException
 import org.valiktor.ConstraintViolationException
 import org.valiktor.i18n.mapToMessage
 
 abstract class AbstractValidatableCQ {
-    fun validate(): List<String> {
+    fun validate() {
         var result: List<String> = listOf()
         try {
             dataValidator()
@@ -13,7 +14,10 @@ abstract class AbstractValidatableCQ {
                 .mapToMessage(baseName = "messages")
                 .map { "${it.property}: ${it.message}" }
         }
-        return result
+
+        if (result.isNotEmpty()) {
+            throw ValidationException(result)
+        }
     }
 
     protected abstract fun dataValidator()

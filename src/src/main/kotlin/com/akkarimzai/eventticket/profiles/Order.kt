@@ -18,6 +18,7 @@ fun Order.toDto(): OrderDto {
 
 fun OrderItem.toDto(): OrderItemDto {
     return OrderItemDto(
+        id = this.id!!,
         ticket = this.ticket.toDto(),
         count = this.amount
     )

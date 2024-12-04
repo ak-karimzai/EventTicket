@@ -2,6 +2,7 @@ package com.akkarimzai.eventticket.models.order
 
 import com.akkarimzai.eventticket.models.common.AbstractValidatableCQ
 import com.akkarimzai.eventticket.models.orderItem.CreateOrderItemCommand
+import com.akkarimzai.eventticket.models.orderItem.UpdateOrderItemCommand
 import org.apache.coyote.BadRequestException
 import org.valiktor.functions.hasSize
 import org.valiktor.functions.validateForEach
@@ -14,7 +15,7 @@ import jakarta.validation.constraints.Size
 data class UpdateOrderCommand(
     @Schema(description = "List of order items to update", example = "[{...}]", required = false)
     @Size(min = 1, max = 20)
-    val items: List<CreateOrderItemCommand>?
+    val items: List<UpdateOrderItemCommand>?
 ) : AbstractValidatableCQ() {
     override fun dataValidator() {
         validate(this) {

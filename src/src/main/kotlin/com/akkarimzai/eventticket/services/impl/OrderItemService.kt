@@ -1,5 +1,6 @@
 package com.akkarimzai.eventticket.services.impl
 
+import com.akkarimzai.eventticket.annotations.Validate
 import com.akkarimzai.eventticket.entities.Order
 import com.akkarimzai.eventticket.entities.OrderItem
 import com.akkarimzai.eventticket.exceptions.BadRequestException
@@ -10,7 +11,6 @@ import com.akkarimzai.eventticket.models.orderItem.ListOrderItemQuery
 import com.akkarimzai.eventticket.models.orderItem.OrderItemDto
 import com.akkarimzai.eventticket.models.orderItem.UpdateOrderItemCommand
 import com.akkarimzai.eventticket.profiles.toDto
-import com.akkarimzai.eventticket.profiles.toOrderItem
 import com.akkarimzai.eventticket.repositories.OrderItemRepository
 import com.akkarimzai.eventticket.repositories.OrderRepository
 import com.akkarimzai.eventticket.repositories.TicketRepository
@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
+@Validate
 class OrderItemService(
     private val orderItemRepository: OrderItemRepository,
     private val ticketRepository: TicketRepository,

@@ -16,7 +16,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 class JwtAuthenticationMiddleware(
     private val jwtService: JwtService,
     private val userService: UserService
-): OncePerRequestFilter() {
+) : OncePerRequestFilter() {
+
     companion object {
         private const val BEARER_PREFIX = "Bearer "
         private const val AUTH_HEADER = "Authorization"
@@ -29,44 +30,48 @@ class JwtAuthenticationMiddleware(
     ) {
         val token = getTokenFromRequest(request)
 
-        if (token != null &&
-            !jwtService.isTokenValid(token) &&
-            jwtService.isTokenExpired(token)) {
+        try {
+            if (token == null) {
+                filterChain.doFilter(request, response)
+            } else if (!jwtService.isTokenValid(token) || jwtService.isTokenExpired(token)) {
+                response.status = HttpServletResponse.SC_UNAUTHORIZED
+            } else {
+                validateToken(token, request)
+            }
+        } catch (e: Exception) {
             response.status = HttpServletResponse.SC_UNAUTHORIZED
+            response.writer.write("Unauthorized: Invalid or expired token")
             return
         }
 
-        if (token != null) {
-            validateToken(token, request)
-        }
         filterChain.doFilter(request, response)
     }
 
     private fun validateToken(token: String, request: HttpServletRequest) {
         val username = jwtService.extractUsername(token)
 
-        if (StringUtils.isNotEmpty(username) &&
-            SecurityContextHolder.getContext().authentication == null) {
+        if (username.isNotBlank() &&
+            SecurityContextHolder.getContext().authentication == null
+        ) {
             val userDetails = userService
                 .userDetailsService()
                 .loadUserByUsername(username)
 
-            val context = SecurityContextHolder.createEmptyContext()
             val authToken = UsernamePasswordAuthenticationToken(
                 userDetails,
                 null,
                 userDetails.authorities
             )
             authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-            context.authentication = authToken
-            SecurityContextHolder.setContext(context)
+
+            SecurityContextHolder.getContext().authentication = authToken
         }
     }
 
     private fun getTokenFromRequest(request: HttpServletRequest): String? {
         val bearerToken = request.getHeader(AUTH_HEADER)
-        return if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-            bearerToken.substring(7)
+        return if (!bearerToken.isNullOrBlank() && bearerToken.startsWith(BEARER_PREFIX)) {
+            bearerToken.substring(BEARER_PREFIX.length)
         } else null
     }
 }

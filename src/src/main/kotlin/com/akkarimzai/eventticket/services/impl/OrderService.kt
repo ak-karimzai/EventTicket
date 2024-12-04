@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Validate
-open class OrderService(
+class OrderService(
     private val orderRepository: OrderRepository,
     private val orderItemRepository: OrderItemRepository,
     private val ticketRepository: TicketRepository,
@@ -51,7 +51,7 @@ open class OrderService(
     }
 
     @Transactional
-    open fun create(command: CreateOrderCommand): Long {
+    fun create(command: CreateOrderCommand): Long {
         logger.info { "request create $command" }
 
         val user = authService.currentUser()
@@ -76,7 +76,7 @@ open class OrderService(
     }
 
     @Transactional
-    open fun update(orderId: Long, command: UpdateOrderCommand) {
+    fun update(orderId: Long, command: UpdateOrderCommand) {
         logger.info { "request update for order: $command" }
 
         val order = loadById(orderId)
@@ -87,7 +87,7 @@ open class OrderService(
 
         val orderItems = orderItemRepository.findAllByOrderId(orderId)
         command.items?.forEach { item ->
-            orderItems.find { it.ticket.id == item.ticketId }?.let {
+            orderItems.find { it.id == item.orderItemId }?.let {
                 it.amount = item.amount
             }
         }

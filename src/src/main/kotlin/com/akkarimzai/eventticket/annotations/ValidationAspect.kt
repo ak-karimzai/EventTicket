@@ -21,11 +21,7 @@ class ValidationAspect {
     fun validateParameters(joinPoint: JoinPoint) {
         val args = joinPoint.args
 
-        args.filterIsInstance<AbstractValidatableCQ>().forEach { param ->
-            val validationErrors = param.validate()
-            if (validationErrors.isNotEmpty()) {
-                throw ValidationException(validationErrors)
-            }
-        }
+        args.filterIsInstance<AbstractValidatableCQ>()
+            .forEach { it.validate() }
     }
 }
