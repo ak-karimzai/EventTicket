@@ -1,5 +1,6 @@
 package com.akkarimzai.eventticket.services.impl
 
+import com.akkarimzai.eventticket.entities.Order
 import com.akkarimzai.eventticket.entities.OrderItem
 import com.akkarimzai.eventticket.exceptions.BadRequestException
 import com.akkarimzai.eventticket.exceptions.NotFoundException
@@ -53,20 +54,26 @@ class OrderItemService(
             throw BadRequestException("invalid order id: $orderId!")
         }
 
-        val order = orderRepository.findById(orderId).orElseThrow {
-            logger.debug { "order with id: $orderId not found" }
-            NotFoundException("order", orderId)
+        val order = throwIfOrderPaid(orderId)
+        val ticket = ticketRepository.findById(command.ticketId).orElseThrow {
+            logger.debug { "ticket with id: ${command.ticketId} not found" }
+            NotFoundException("ticket", command.ticketId)
         }
 
-        if (order.user.id != authService.currentUser().id) {
-            logger.debug { "Order: $orderId not related to authorized user" }
-            throw ForbiddenException("Permission denied")
+        authService.currentUser().also {
+            if (it.id != order.user.id) {
+                logger.debug { "Order: $orderId not related to authorized user" }
+                throw ForbiddenException("Permission denied")
+            }
         }
 
-        val orderItem = command.toOrderItem(order, ticketRepository)
-        val createdOrderItem = orderItemRepository.save(orderItem)
+        val orderItem = OrderItem(
+            order = order,
+            ticket = ticket,
+            amount = command.amount
+        )
 
-        return createdOrderItem.id!!.also {
+        return orderItemRepository.save(orderItem).id!!.also {
             logger.info { "created order item with id: $it" }
         }
     }
@@ -79,9 +86,12 @@ class OrderItemService(
             throw BadRequestException("invalid order id: $orderId!")
         }
 
+        throwIfOrderPaid(orderId)
+
         val orderItem = loadOrderItem(orderId, command.orderItemId)
-        val updatedOrderItem = command.toOrderItem(orderItem)
-        orderItemRepository.save(updatedOrderItem).also {
+        orderItem.amount = command.amount
+
+        orderItemRepository.save(orderItem).also {
             logger.info { "updated order item with id: ${command.orderItemId}" }
         }
     }
@@ -104,6 +114,18 @@ class OrderItemService(
         return orderItem.toDto().also {
             logger.info { "loaded order item with id: $orderItemId" }
         }
+    }
+
+    private fun throwIfOrderPaid(orderId: Long): Order {
+        val order = orderRepository.findById(orderId).orElseThrow {
+            logger.debug { "order with id: $orderId not found" }
+            NotFoundException("order", orderId)
+        }
+        if (order.orderPaid) {
+            logger.debug { "order with id: $orderId already paid" }
+            throw ForbiddenException("Order already paid")
+        }
+        return order
     }
 
     private fun loadOrderItem(orderId: Long, orderItemId: Long): OrderItem {

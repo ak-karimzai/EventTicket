@@ -4,15 +4,20 @@ import com.akkarimzai.eventticket.annotations.Validate
 import com.akkarimzai.eventticket.entities.User
 import com.akkarimzai.eventticket.exceptions.ConflictException
 import com.akkarimzai.eventticket.exceptions.NotFoundException
+import com.akkarimzai.eventticket.models.user.UpdateUserCommand
+import com.akkarimzai.eventticket.profiles.toUser
 import com.akkarimzai.eventticket.repositories.UserRepository
 import com.akkarimzai.eventticket.services.UserService
 import mu.KotlinLogging
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
 @Validate
-class UserServiceImpl(private val repository: UserRepository): UserService {
+class UserServiceImpl(
+    private val userRepository: UserRepository,
+): UserService {
     private val logger = KotlinLogging.logger {}
 
     override fun userDetailsService(): UserDetailsService =
@@ -21,7 +26,7 @@ class UserServiceImpl(private val repository: UserRepository): UserService {
     override fun loadByUsername(username: String): User {
         logger.info { "Loading user with username: $username" }
 
-        return repository.findByUsername(username)
+        return userRepository.findByUsername(username)
             ?: throw NotFoundException("user", username).also {
                 logger.debug { "User-username: $username not found" }
             }
@@ -42,29 +47,31 @@ class UserServiceImpl(private val repository: UserRepository): UserService {
             }
         }
 
-        return repository.save(user).also {
+        return userRepository.save(user).also {
             logger.debug { "User saved with id: ${user.id}" }
         }
     }
 
     override fun update(user: User): User {
-        return this.create(user)
+        return userRepository.save(user).also {
+            logger.debug { "User updated with id: ${user.id}" }
+        }
     }
 
-    private fun isUsernameExists(username: String): Boolean {
+    override fun isUsernameExists(username: String): Boolean {
         logger.info { "Checking username existence: $username" }
 
-        return repository.existsByUsername(username).also { exist ->
+        return userRepository.existsByUsername(username).also { exist ->
             val status = "exists"; if (exist) else "not found"
 
             logger.info { "User-username: $username $status" }
         }
     }
 
-    private fun isEmailExists(email: String): Boolean {
+    override fun isEmailExists(email: String): Boolean {
         logger.info { "Checking email existence: $email" }
 
-        return repository.existsByEmail(email).also { exist ->
+        return userRepository.existsByEmail(email).also { exist ->
             val status = "exists"; if (exist) else "not found"
 
             logger.info { "User-email: $email $status" }

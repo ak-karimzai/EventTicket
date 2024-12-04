@@ -10,24 +10,29 @@ import com.akkarimzai.eventticket.models.event.ListEventQuery
 import com.akkarimzai.eventticket.models.event.UpdateEventCommand
 import com.akkarimzai.eventticket.profiles.toDto
 import com.akkarimzai.eventticket.profiles.toEvent
+import com.akkarimzai.eventticket.profiles.toTicket
 import com.akkarimzai.eventticket.repositories.CategoryRepository
 import com.akkarimzai.eventticket.repositories.EventRepository
+import com.akkarimzai.eventticket.repositories.TicketRepository
 import com.akkarimzai.eventticket.repositories.specs.EventSpecification
 import com.akkarimzai.eventticket.services.AuthService
 import mu.KotlinLogging
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Validate
-class EventService(
+open class EventService(
     private val categoryRepository: CategoryRepository,
     private val eventRepository: EventRepository,
+    private val ticketRepository: TicketRepository,
     private val authService: AuthService) {
     private val logger = KotlinLogging.logger {}
 
-    fun create(categoryId: Long, command: CreateEventCommand): Long {
+    @Transactional
+    open fun create(categoryId: Long, command: CreateEventCommand): Long {
         logger.info { "Request create event: $command" }
 
         if (categoryId <= 0) {
@@ -43,9 +48,17 @@ class EventService(
 
         val event = command.toEvent(currentUser, category)
 
-        return eventRepository.save(event).id!!.also {
+        eventRepository.save(event).also {
             logger.debug { "new category with id {$categoryId} created" }
         }
+
+        command.tickets.map { it.toTicket(currentUser, event) }
+            .also {
+                ticketRepository.saveAll(it)
+                logger.debug { "${it.size} tickets created for event: ${event.title}" }
+            }
+
+        return event.id!!
     }
 
     fun update(categoryId: Long, eventId: Long, command: UpdateEventCommand) {

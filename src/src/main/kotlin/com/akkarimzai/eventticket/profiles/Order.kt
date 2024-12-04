@@ -23,29 +23,8 @@ fun OrderItem.toDto(): OrderItemDto {
     )
 }
 
-fun CreateOrderCommand.toOrder(createdBy: User, ticketRepository: TicketRepository): Order {
+fun CreateOrderCommand.toOrder(createdBy: User): Order {
     return Order(
         user = createdBy,
-        items = this.items.map { it.toOrderItem(ticketRepository = ticketRepository) }.toMutableList()
-    ).also { order ->
-        order.items.forEach { item ->
-            item.order = order
-        }
-    }
-}
-
-
-
-
-fun UpdateOrderCommand.toOrder(order: Order, ticketRepository: TicketRepository): Order {
-    this.items?.forEach { itemDto ->
-        val item = itemDto.toOrderItem(ticketRepository = ticketRepository)
-        val orderItem = order.items.firstOrNull { orderItem -> orderItem.ticket.id == item.ticket.id }
-        if (orderItem != null) {
-            orderItem.amount = item.amount
-        } else {
-            order.items.add(item)
-        }
-    }
-    return order
+    )
 }

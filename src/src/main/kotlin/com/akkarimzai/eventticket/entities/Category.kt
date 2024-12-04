@@ -5,6 +5,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "categories")
+@SequenceGenerator(name = "category_seq", sequenceName = "category_seq", allocationSize = 1)
 class Category(
     id: Long? = null,
 

@@ -9,8 +9,7 @@ import jakarta.persistence.SequenceGenerator
 @MappedSuperclass
 abstract class Entity(
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entity_seq")
-    @SequenceGenerator(name = "entity_seq", sequenceName = "entity_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var id: Long? = null
 ) {
     override fun equals(other: Any?): Boolean {

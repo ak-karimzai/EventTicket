@@ -4,6 +4,7 @@ import  com.akkarimzai.eventticket.entities.common.Entity
 import jakarta.persistence.Column
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -12,6 +13,7 @@ import java.time.LocalDateTime
 
 @jakarta.persistence.Entity
 @Table(name = "users")
+@SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
 class User(
     id: Long? = null,
 

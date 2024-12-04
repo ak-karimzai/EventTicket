@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "events")
+@SequenceGenerator(name = "event_seq", sequenceName = "event_seq", allocationSize = 1)
 class Event(
     id: Long? = null,
 

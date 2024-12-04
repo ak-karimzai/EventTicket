@@ -4,12 +4,15 @@ import com.akkarimzai.eventticket.entities.Role
 import com.akkarimzai.eventticket.entities.User
 import com.akkarimzai.eventticket.exceptions.ConflictException
 import com.akkarimzai.eventticket.exceptions.NotFoundException
+import com.akkarimzai.eventticket.models.user.UpdateUserCommand
 import com.akkarimzai.eventticket.repositories.UserRepository
+import io.jsonwebtoken.security.Password
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import org.springframework.security.crypto.password.PasswordEncoder
 
 class UserServiceImplTest : FunSpec({
     val mockRepository = mockk<UserRepository>()
@@ -80,6 +83,7 @@ class UserServiceImplTest : FunSpec({
         // Arrange
         val user = User(id = 1, name = "testtest", email = "test@example.com",
             username = "testuser", password = "testtest", role = Role.USER)
+        val updateRequest = UpdateUserCommand(name = "testtest", null, null, null, null)
 
         every { mockRepository.existsByUsername(user.username) } returns false
         every { mockRepository.existsByEmail(user.email) } returns false

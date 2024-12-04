@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface OrderItemRepository : JpaRepository<OrderItem, Long> {
     fun findAllByOrderId(orderId: Long, pageable: Pageable): Page<OrderItem>
+    fun findAllByOrderId(orderId: Long): List<OrderItem>
 }

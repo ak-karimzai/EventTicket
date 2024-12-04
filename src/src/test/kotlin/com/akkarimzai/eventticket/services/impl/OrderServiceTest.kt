@@ -9,6 +9,7 @@ import com.akkarimzai.eventticket.models.order.ListOrderQuery
 import com.akkarimzai.eventticket.models.order.UpdateOrderCommand
 import com.akkarimzai.eventticket.profiles.toDto
 import com.akkarimzai.eventticket.profiles.toOrder
+import com.akkarimzai.eventticket.repositories.OrderItemRepository
 import com.akkarimzai.eventticket.repositories.OrderRepository
 import com.akkarimzai.eventticket.repositories.TicketRepository
 import io.kotest.assertions.throwables.shouldThrow
@@ -25,10 +26,11 @@ import java.util.*
 
 class OrderServiceTest : FunSpec({
     val orderRepository = mockk<OrderRepository>()
+    val orderItemRepository = mockk<OrderItemRepository>()
     val ticketRepository = mockk<TicketRepository>()
     val authService = mockk<AuthServiceImpl>()
 
-    val orderService = OrderService(orderRepository, ticketRepository, authService)
+    val orderService = OrderService(orderRepository, orderItemRepository, ticketRepository, authService)
 
     val orderId = 1L
 
@@ -96,7 +98,7 @@ class OrderServiceTest : FunSpec({
     test("update should update an existing order") {
         // Arrange
         val command = UpdateOrderCommand(listOf())
-        val updatedOrder = command.toOrder(order, ticketRepository)
+        val updatedOrder = Order(id = 1L, user = user, orderPlaced = LocalDateTime.now(), orderPaid = true, items = mutableListOf())
         every { orderRepository.findById(orderId) } returns Optional.of(order)
         every { orderRepository.save(updatedOrder) } returns updatedOrder
         every { authService.currentUser() } returns user

@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 @jakarta.persistence.Entity
 @Table(name = "orders")
+@SequenceGenerator(name = "order_seq", sequenceName = "order_seq", allocationSize = 1)
 class Order(
     id: Long? = null,
 

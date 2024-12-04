@@ -1,7 +1,11 @@
 package com.akkarimzai.eventticket.controllers
 
+import com.akkarimzai.eventticket.models.user.AuthResponse
 import com.akkarimzai.eventticket.models.user.LoginCommand
 import com.akkarimzai.eventticket.models.user.RegisterCommand
+import com.akkarimzai.eventticket.models.user.UpdateUserCommand
+import com.akkarimzai.eventticket.models.user.UserDto
+import org.hibernate.sql.Update
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
@@ -113,5 +117,45 @@ class AuthControllerTest : AbstractIntegrationTest() {
             .bodyValue(request)
             .exchange()
             .expectStatus().isNotFound
+    }
+
+    @Test
+    fun `should update user successfully`() {
+        val request = RegisterCommand(
+            name = "John Doe",
+            email = "Tq4lM333@example.com",
+            username = "johndoe322",
+            password = "password"
+        )
+        val responseBody = webTestClient.post()
+            .uri("/api/v1/auth/register")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(request)
+            .exchange()
+            .expectStatus().isCreated
+            .expectBody(AuthResponse::class.java)
+            .returnResult()
+            .responseBody!!
+
+        val updateRequest = UpdateUserCommand(
+            name = "John Doe Updated", null, null, null, null)
+
+        webTestClient.put()
+            .uri("/api/v1/auth/update")
+            .header("Authorization", "Bearer ${responseBody.token}")
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(updateRequest)
+            .exchange()
+            .expectStatus().isNoContent
+
+        webTestClient.get()
+            .uri("/api/v1/auth/me")
+            .header("Authorization", "Bearer ${responseBody.token}")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody(UserDto::class.java)
+            .value { userDto ->
+                userDto.name == updateRequest.name
+            }
     }
 }

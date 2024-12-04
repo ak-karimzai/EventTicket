@@ -5,6 +5,7 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "tickets")
+@SequenceGenerator(name = "ticket_seq", sequenceName = "ticket_seq", allocationSize = 1)
 class Ticket(
     id: Long? = null,
     @Column(nullable = false)
