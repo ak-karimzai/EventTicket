@@ -394,7 +394,7 @@ class OrderControllerTest(
             }!!
 
         val updatedOrderItemRequests = orderItems.map {
-            UpdateOrderItemCommand(
+            UpdateOrderCommand.UpdateOrderItem(
                 orderItemId = it.id,
                 amount = ThreadLocalRandom.current().nextInt(1, 20))
         }

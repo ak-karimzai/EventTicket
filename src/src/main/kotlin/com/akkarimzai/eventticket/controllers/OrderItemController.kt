@@ -174,7 +174,7 @@ class OrderItemController(private val orderItemService: OrderItemService) {
         command: CreateOrderItemCommand
     ): Long = orderItemService.create(orderId, command)
 
-    @PutMapping
+    @PutMapping("/{orderItemId}")
     @Operation(
         summary = "Update an order item",
         description = "Updates an order item",
@@ -210,6 +210,13 @@ class OrderItemController(private val orderItemService: OrderItemService) {
             required = true
         )
         orderId: Long,
+        @PathVariable
+        @Parameter(
+            name = "orderItemId",
+            description = "Order item ID",
+            required = true
+        )
+        orderItemId: Long,
         @RequestBody
         @Parameter(
             name = "command",
@@ -217,7 +224,7 @@ class OrderItemController(private val orderItemService: OrderItemService) {
             required = true
         )
         command: UpdateOrderItemCommand
-    ) = orderItemService.update(orderId, command)
+    ) = orderItemService.update(orderId, orderItemId, command)
 
     @DeleteMapping("/{orderItemId}")
     @Operation(

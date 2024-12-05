@@ -24,14 +24,14 @@ import org.springframework.data.domain.PageRequest
 import java.time.LocalDateTime
 import java.util.*
 
-class OrderItemServiceTest : FunSpec({
-    val orderItemRepository: OrderItemRepository = mockk()
-    val ticketRepository: TicketRepository = mockk()
-    val orderRepository: OrderRepository = mockk()
-    val authService: AuthService = mockk()
-    val orderItemService = OrderItemService(
+class OrderItemServiceTest(
+    val orderItemRepository: OrderItemRepository = mockk(),
+    val ticketRepository: TicketRepository = mockk(),
+    val orderRepository: OrderRepository = mockk(),
+    val authService: AuthService = mockk(),
+    val orderItemService: OrderItemService = OrderItemService(
         orderItemRepository, ticketRepository, orderRepository, authService)
-
+) : FunSpec({
     val user = User(id = 1L, name = "testtest", email = "email@mail.ru",
         phoneNumber = null, "username", "password", role = Role.USER)
     val orderId = 1L
@@ -39,7 +39,7 @@ class OrderItemServiceTest : FunSpec({
     val event = Event(id = 1L, title = "Event 1", artist = "Artist 1", date = LocalDateTime.now(), category = category)
     val ticket = Ticket(id = 1L, event = event, title = "Test Ticket", price = 43.2)
     val order = Order(id = orderId, user = user, orderPlaced = LocalDateTime.now(),
-        orderPaid = true, items = mutableListOf()
+        orderPaid = false, items = mutableListOf()
     )
     val orderItems = mutableListOf(
         OrderItem(id = 1L, order = order, ticket = ticket, amount = 1),
@@ -136,13 +136,13 @@ class OrderItemServiceTest : FunSpec({
             // Arrange
             val orderId = 1L
             val orderItemId = 1L
-            val command = UpdateOrderItemCommand(orderItemId = 1L, amount = 1)
+            val command = UpdateOrderItemCommand(amount = 1)
             every { orderRepository.findById(orderId) } returns Optional.empty()
             every { orderItemRepository.findById(orderItemId) } returns Optional.empty()
 
             // Act && Assert
             shouldThrow<NotFoundException> {
-                orderItemService.update(orderId, command)
+                orderItemService.update(orderId, orderItemId, command)
             }
         }
 
@@ -180,11 +180,11 @@ class OrderItemServiceTest : FunSpec({
             every { authService.currentUser() } returns user
             every { orderItemRepository.findById(orderItemId) } returns Optional.of(orderItem)
 
-            val command = UpdateOrderItemCommand(orderItemId = orderItemId, amount = 2)
+            val command = UpdateOrderItemCommand(amount = 2)
 
             // Act && Assert
             shouldThrow<ForbiddenException> {
-                orderItemService.update(orderId, command)
+                orderItemService.update(orderId, orderItemId, command)
             }
 
             verify(exactly = 0) { orderItemRepository.save(any()) }
@@ -199,10 +199,10 @@ class OrderItemServiceTest : FunSpec({
             every { authService.currentUser() } returns user
             every { orderItemRepository.findById(orderItemId) } returns Optional.of(orderItems[0])
             every { orderItemRepository.save(any()) } returns orderItems[0]
-            val command = UpdateOrderItemCommand(orderItemId = orderItemId, amount = 2)
+            val command = UpdateOrderItemCommand(amount = 2)
 
             // Act
-            orderItemService.update(orderId, command)
+            orderItemService.update(orderId, orderItemId, command)
 
             // Assert
             verify(exactly = 1) { orderItemRepository.save(any()) }

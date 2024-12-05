@@ -3,6 +3,7 @@ package com.akkarimzai.eventticket.services.impl
 import com.akkarimzai.eventticket.entities.Category
 import com.akkarimzai.eventticket.entities.Event
 import com.akkarimzai.eventticket.entities.Ticket
+import com.akkarimzai.eventticket.entities.User
 import com.akkarimzai.eventticket.exceptions.BadRequestException
 import com.akkarimzai.eventticket.exceptions.NotFoundException
 import com.akkarimzai.eventticket.models.ticket.CreateTicketCommand
@@ -60,6 +61,9 @@ class TicketServiceTest : FunSpec({
     test("should create a new ticket") {
         // Arrange
         val createTicketCommand = CreateTicketCommand(title = "New Ticket", description = null, price = 43.2)
+        val user = User(id = 1L, name = "John Doe", email = "Tq4lM@example.com",
+            username = "johndoe", password = "password")
+        every { authService.currentUser() } returns user
         every { eventRepository.findById(eventId) } returns Optional.of(event)
         every { ticketRepository.save(any()) } returns ticket
 

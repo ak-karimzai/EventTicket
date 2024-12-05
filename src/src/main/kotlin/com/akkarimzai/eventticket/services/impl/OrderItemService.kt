@@ -79,7 +79,7 @@ class OrderItemService(
         }
     }
 
-    fun update(orderId: Long, command: UpdateOrderItemCommand) {
+    fun update(orderId: Long, orderItemId: Long, command: UpdateOrderItemCommand) {
         logger.info { "request update order item: $command" }
 
         if (orderId <= 0) {
@@ -87,13 +87,17 @@ class OrderItemService(
             throw BadRequestException("invalid order id: $orderId!")
         }
 
+        if (orderItemId <= 0) {
+            logger.debug { "order item id: $orderItemId <= 0" }
+        }
+
         throwIfOrderPaid(orderId)
 
-        val orderItem = loadOrderItem(orderId, command.orderItemId)
+        val orderItem = loadOrderItem(orderId, orderItemId)
         orderItem.amount = command.amount
 
         orderItemRepository.save(orderItem).also {
-            logger.info { "updated order item with id: ${command.orderItemId}" }
+            logger.info { "updated order item with id: ${orderItemId}" }
         }
     }
 

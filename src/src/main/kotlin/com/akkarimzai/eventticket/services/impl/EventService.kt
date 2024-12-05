@@ -48,17 +48,17 @@ open class EventService(
 
         val event = command.toEvent(currentUser, category)
 
-        eventRepository.save(event).also {
+        val savedEvent = eventRepository.save(event).also {
             logger.debug { "new category with id {$categoryId} created" }
         }
 
-        command.tickets.map { it.toTicket(currentUser, event) }
+        command.tickets.map { it.toTicket(currentUser, savedEvent) }
             .also {
                 ticketRepository.saveAll(it)
-                logger.debug { "${it.size} tickets created for event: ${event.title}" }
+                logger.debug { "${it.size} tickets created for event: ${savedEvent.title}" }
             }
 
-        return event.id!!
+        return savedEvent.id!!
     }
 
     fun update(categoryId: Long, eventId: Long, command: UpdateEventCommand) {

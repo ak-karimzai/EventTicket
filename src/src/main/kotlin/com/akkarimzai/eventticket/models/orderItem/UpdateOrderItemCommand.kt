@@ -9,19 +9,12 @@ import jakarta.validation.constraints.Min
 
 @Schema(description = "Command to update an order item")
 data class UpdateOrderItemCommand(
-    @Schema(description = "Order item ID", example = "1", required = true)
-    @get:Min(1)
-    val orderItemId: Long,
-
     @Schema(description = "New amount", example = "2", required = true)
     @get:Min(1)
     val amount: Int
 ) : AbstractValidatableCQ() {
     override fun dataValidator() {
         validate(this) {
-            validate(UpdateOrderItemCommand::orderItemId)
-                .isGreaterThan(0)
-
             validate(UpdateOrderItemCommand::amount)
                 .isGreaterThan(0)
         }

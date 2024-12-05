@@ -2,6 +2,9 @@ package com.akkarimzai.eventticket.services.impl
 
 import com.akkarimzai.eventticket.entities.Category
 import com.akkarimzai.eventticket.entities.Event
+import com.akkarimzai.eventticket.entities.Role
+import com.akkarimzai.eventticket.entities.Ticket
+import com.akkarimzai.eventticket.entities.User
 import com.akkarimzai.eventticket.exceptions.BadRequestException
 import com.akkarimzai.eventticket.exceptions.NotFoundException
 import com.akkarimzai.eventticket.models.event.CreateEventCommand
@@ -40,9 +43,13 @@ class EventServiceTest : FunSpec({
         val command = CreateEventCommand("Event 1", "Artist 1", LocalDateTime.now(), listOf())
         val category = Category(id = categoryId, title = "Category 1")
         val event = Event(id = 1L, title = "Event 1", artist = "Artist 1", date = LocalDateTime.now(), category = category)
+        val user = User(id = 1L, username = "username", password = "password",
+            role = Role.ADMIN, name = "name", email = "email")
 
+        every { authService.currentUser() } returns user
         every { categoryRepository.findById(categoryId) } returns Optional.of(category)
         every { eventRepository.save(any()) } returns event
+        every { ticketRepository.saveAll(any<List<Ticket>>()) } returns listOf()
 
         // Act
         val result = eventService.create(categoryId, command)

@@ -44,14 +44,14 @@ open class CategoryService(
 
         val user = authService.currentUser()
         val category = command.toCategory(user)
-        categoryRepository.save(category)
+        val savedCategory = categoryRepository.save(category)
         logger.info("Category created with ID: ${category.id}")
 
         command.events?.forEach { eventCommand ->
             logger.info("Processing event: ${eventCommand.title}")
 
-            val event = eventCommand.toEvent(user, category)
-            logger.info("Creating event: ${event.title} for category: ${category.title}")
+            val event = eventCommand.toEvent(user, savedCategory)
+            logger.info("Creating event: ${event.title} for category: ${savedCategory.title}")
             eventRepository.save(event)
             logger.info("Event created with ID: ${event.id}")
 
@@ -61,8 +61,8 @@ open class CategoryService(
             logger.info("${tickets.size} tickets created for event: ${event.title}")
         }
 
-        logger.info("Category creation complete with ID: ${category.id}")
-        return category.id!!
+        logger.info("Category creation complete with ID: ${savedCategory.id}")
+        return savedCategory.id!!
     }
 
     fun update(categoryId: Long, command: UpdateCategoryCommand) {

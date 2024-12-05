@@ -1,6 +1,7 @@
 package com.akkarimzai.eventticket.services.impl
 
 import com.akkarimzai.eventticket.entities.Order
+import com.akkarimzai.eventticket.entities.OrderItem
 import com.akkarimzai.eventticket.entities.Role
 import com.akkarimzai.eventticket.entities.User
 import com.akkarimzai.eventticket.exceptions.NotFoundException
@@ -14,6 +15,7 @@ import com.akkarimzai.eventticket.repositories.OrderRepository
 import com.akkarimzai.eventticket.repositories.TicketRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.floats.exactly
 import io.kotest.matchers.shouldBe
 import io.mockk.clearMocks
 import io.mockk.every
@@ -39,11 +41,11 @@ class OrderServiceTest : FunSpec({
     every { authService.currentUser() } returns user
 
     val order = Order(id = 1L, user = user, orderPlaced = LocalDateTime.now(),
-        orderPaid = true, items = mutableListOf()
+        orderPaid = false, items = mutableListOf()
     )
 
     beforeEach {
-        clearMocks(orderRepository, ticketRepository, authService)
+        clearMocks(orderRepository, orderItemRepository, ticketRepository, authService)
     }
 
     test("load should return order when order exists") {
@@ -87,6 +89,7 @@ class OrderServiceTest : FunSpec({
         val command = CreateOrderCommand(listOf())
         every { authService.currentUser() } returns user
         every { orderRepository.save(any()) } returns order
+        every { orderItemRepository.saveAll(any<List<OrderItem>>()) } returns listOf()
 
         // Act
         val result = orderService.create(command)
@@ -101,12 +104,14 @@ class OrderServiceTest : FunSpec({
         val updatedOrder = Order(id = 1L, user = user, orderPlaced = LocalDateTime.now(), orderPaid = true, items = mutableListOf())
         every { orderRepository.findById(orderId) } returns Optional.of(order)
         every { orderRepository.save(updatedOrder) } returns updatedOrder
+        every { orderItemRepository.findAllByOrderId(updatedOrder.id!!) } returns listOf()
+        every { orderItemRepository.saveAll(any<List<OrderItem>>()) } returns listOf()
         every { authService.currentUser() } returns user
 
         // Act
         orderService.update(orderId, command)
 
         // Assert
-        verify { orderRepository.save(updatedOrder) }
+        verify(exactly = 1) { orderItemRepository.saveAll(any<List<OrderItem>>()) }
     }
 })

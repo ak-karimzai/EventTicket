@@ -56,8 +56,7 @@ class OrderService(
 
         val user = authService.currentUser()
         val order = command.toOrder(user)
-
-        orderRepository.save(order).id!!.also {
+        val savedOrder = orderRepository.save(order).also {
             logger.debug { "order with id $it create" }
         }
 
@@ -66,13 +65,13 @@ class OrderService(
                 logger.debug { "ticket with id ${it.ticketId} not found" }
                 NotFoundException("ticket", it.ticketId)
             }
-            OrderItem(order = order, ticket = ticket, amount = it.amount)
+            OrderItem(order = savedOrder, ticket = ticket, amount = it.amount)
         }.also {
             orderItemRepository.saveAll(it)
             logger.debug { "order items created" }
         }
 
-        return order.id!!
+        return savedOrder.id!!
     }
 
     @Transactional

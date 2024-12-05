@@ -19,7 +19,7 @@ data class CreateOrderCommand(
         validate(this) {
             validate(CreateOrderCommand::items)
                 .hasSize(min = 1, max = 20)
-                .validateForEach { it.validate()}
+                .validateForEach { it.validate() }
         }
     }
 }
