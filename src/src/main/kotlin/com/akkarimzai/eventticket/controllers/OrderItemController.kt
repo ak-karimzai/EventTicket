@@ -54,26 +54,14 @@ class OrderItemController(private val orderItemService: OrderItemService) {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     fun list(
-        @PathVariable
-        @Parameter(
-            name = "orderId",
-            description = "Order ID",
-            required = true
-        )
+        @PathVariable("orderId")
+        @Parameter(name = "orderId", description = "Order ID", required = true)
         orderId: Long,
-        @RequestParam
-        @Parameter(
-            name = "page",
-            description = "Page number",
-            required = false
-        )
+        @RequestParam(name = "page", defaultValue = "0")
+        @Parameter(name = "page", description = "Page number", required = false)
         page: Int = 0,
-        @RequestParam
-        @Parameter(
-            name = "size",
-            description = "Page size",
-            required = false
-        )
+        @RequestParam(name = "size", defaultValue = "10")
+        @Parameter(name = "size", description = "Page size", required = false)
         size: Int = 10,
         assembler: PagedResourcesAssembler<OrderItemDto>
     ): PagedModel<EntityModel<OrderItemDto>> {
@@ -106,6 +94,11 @@ class OrderItemController(private val orderItemService: OrderItemService) {
             ApiResponse(
                 responseCode = "403",
                 description = "Permission denied",
+                content = [Content(schema = Schema(implementation = ErrorResponse::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Order item not found",
                 content = [Content(schema = Schema(implementation = ErrorResponse::class))]
             )
         ]

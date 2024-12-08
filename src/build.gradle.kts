@@ -46,7 +46,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     implementation("org.apache.commons:commons-lang3:3.0")
 
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     implementation("org.apache.commons:commons-lang3:3.17.0")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

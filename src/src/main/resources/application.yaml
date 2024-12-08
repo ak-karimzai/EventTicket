@@ -19,3 +19,7 @@ security:
   signing:
     key: c63a4b9c304df32b788ca2404869a51b44adaa1d253cf9f5eb5bd75b45e5aea9
     ttl: 3600000
+
+springdoc:
+  api-docs.path: /v3/api-docs
+  swagger-ui.path: /swagger-ui.html
