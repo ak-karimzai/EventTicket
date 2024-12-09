@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgres:14-alpine3.20'
+    environment:
+      - 'POSTGRES_DB=event-management'
+      - 'POSTGRES_PASSWORD=root'
+      - 'POSTGRES_USER=root'
+    ports:
+      - '5454:5432'
